@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Fichier {
 
-	private static String cheminFichier = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.DON";
+	private static String cheminFichierTxt = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.DON";
 
 	// attributs
 	private String nom;
@@ -31,7 +31,7 @@ public class Fichier {
 	// constructeurs
 	public Fichier(String nom) {
 		this.nom = nom;
-		this.chemin = cheminFichier;
+		this.chemin = cheminFichierTxt;
 	}
 
 	public Fichier() {
@@ -42,7 +42,7 @@ public class Fichier {
 	@Override
 	public String toString() {
 
-		String message = "Fichier" + nom + " dans " + chemin + "\n";
+		String message = "Fichier : " + nom + " dans " + chemin + "\n";
 		String listeDeLignes = "";
 		for (String ligne : lignesDuFichier) {
 			listeDeLignes += ligne + "\n";
@@ -53,7 +53,7 @@ public class Fichier {
 	}
 	
 	// lit le fichier et ajoute chaque ligne dans un ArrayList lignesDuFichier
-		public void lectureFichier() {
+		public ArrayList<String> lectureFichier() {
 
 			try (BufferedReader bufferredReader = new BufferedReader(new FileReader(getChemin()));) {
 
@@ -67,6 +67,24 @@ public class Fichier {
 			} catch (IOException e) {
 				System.err.println(e);
 			}
+			return getLignesDuFichier();
 		}
+		// lit le fichier et ajoute chaque ligne dans un ArrayList lignesDuFichier
+				public void lectureSimple() {
+
+					try (BufferedReader bufferredReader = new BufferedReader(new FileReader(getChemin()));) {
+
+						String line;
+						while ((line = bufferredReader.readLine()) != null) {
+							getLignesDuFichier().add(line);
+						}
+
+					} catch (FileNotFoundException e) {
+						System.err.println(e);
+					} catch (IOException e) {
+						System.err.println(e);
+					}					
+				}
+
 
 }
