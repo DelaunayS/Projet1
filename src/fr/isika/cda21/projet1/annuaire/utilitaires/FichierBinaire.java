@@ -1,18 +1,21 @@
 package fr.isika.cda21.projet1.annuaire.utilitaires;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
+import fr.isika.cda21.projet1.annuaire.modeles.Noeud;
+import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
+
 public class FichierBinaire {
 
-	private static String cheminFichierBin = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.BIN";
+	public static String cheminFichierBin = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.BIN";
+	public final static int TAILLE_NOEUD = 168;
 
 	// attributs
 	private String nom;
 	private String chemin;
-	private ArrayList<String> lignesDuFichier = new ArrayList<String>();
+	private ArrayList<Stagiaire> listeStagiaires = new ArrayList<Stagiaire>();
 
 	// getters
 	public String getNom() {
@@ -23,8 +26,8 @@ public class FichierBinaire {
 		return chemin;
 	}
 
-	public ArrayList<String> getLignesDuFichier() {
-		return lignesDuFichier;
+	public ArrayList<Stagiaire> getListeStagiaires() {
+		return listeStagiaires;
 	}
 
 	// constructeurs
@@ -34,46 +37,100 @@ public class FichierBinaire {
 	}
 
 	public FichierBinaire() {
+		this.chemin = cheminFichierBin;
 
 	}
 
 	// sauvegarde dans le fichier
-	public void sauvegardeFichierBin(ArrayList<String> listeDeLignes) {
+	public void sauvegardeFichierBin(Noeud noeud, RandomAccessFile raf) {
+
+		/*
+		 * un stagiaire : => 160 nom 30 caractères => 30*2=60 prenom 30 caractères =>
+		 * 30*2=60 departement 3 caractères => 3*2 =6 formation 15 caractères => 15*2=30
+		 * annee entier => 4
+		 */
+
 		try {
-			RandomAccessFile raf = new RandomAccessFile(getChemin(), "rw");
-
-			for (String ligne : listeDeLignes) {
-				System.out.println(ligne);
-				raf.writeChars(ligne);
-			}
-
-			System.out.println("taille du fichier binaire : " + raf.length());
-
-		
-			raf.close();
-		  
-		 
+			raf.writeChars(noeud.getCle().nomLongBin());
+			raf.writeChars(noeud.getCle().prenomLongBin());
+			raf.writeChars(noeud.getCle().departementLongBin());
+			raf.writeChars(noeud.getCle().formationLongBin());
+			raf.writeInt(noeud.getCle().getAnnee());
+			raf.writeInt(noeud.getFilsGauche());
+			raf.writeInt(noeud.getFilsDroit());
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	// lecture du fichier
-	public void lectureFichierBin() {
-		try {
-			RandomAccessFile raf = new RandomAccessFile(getChemin(), "r");
-			System.out.println("taille du fichier binaire : " + raf.length());
+	public Noeud lectureFichierBin(RandomAccessFile raf) {
+		
+		try {		
 
-			raf.seek(0);	
-			//System.out.println(raf.readLine());
+			// variables nécessaire au stockage temporaire des données lues
+			Noeud noeud = new Noeud();
+			Stagiaire stagiaire = new Stagiaire();
+			String nom = "";
+			String prenom = "";
+			String departement = "";
+			String formation = "";
+			int annee = 0;
+			int filsGauche = 0;
+			int filsDroit = 0;
 
-			raf.close();
-		}catch (EOFException eof) {
-	            // fin normale de la lecture
-	            System.out.println();
+			// lecture du nom
+			for (int i = 0; i < Stagiaire.TAILLE_MAX; i++) {
+				nom += raf.readChar();
+			}
+			stagiaire.setNom(nom.trim());
+
+			// lecture du prenom
+			for (int i = 0; i < Stagiaire.TAILLE_MAX; i++) {
+				prenom += raf.readChar();
+			}
+			stagiaire.setPrenom(prenom.trim());
+
+			// lecture du departement
+			for (int i = 0; i < Stagiaire.TAILLE3_MAX; i++) {
+				departement += raf.readChar();
+			}
+			stagiaire.setDepartement(departement.trim());
+
+			// lecture du formation
+			for (int i = 0; i < Stagiaire.TAILLE2_MAX; i++) {
+				formation += raf.readChar();
+			}
+			stagiaire.setLibelleFormation(formation.trim());
+			// lecture de l'année
+
+			annee += raf.readInt();
+
+			stagiaire.setAnnee(annee);
+
+			// lecture fils gauche
+			filsGauche = raf.readInt();
+			noeud.setFilsGauche(filsGauche);
+
+			// lecture fils droite
+			filsDroit = raf.readInt();
+			noeud.setFilsDroit(filsDroit);
+
+			noeud.setCle(stagiaire);
+
+			return noeud;
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
 
 	}
+
+	// récupérer Stagiaire
+	public void recupererStagiaire() {
+
+	}
+
 }

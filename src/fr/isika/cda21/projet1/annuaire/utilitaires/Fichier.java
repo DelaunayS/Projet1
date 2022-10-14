@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
+
 public class Fichier {
 
 	private static String cheminFichierTxt = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.DON";
@@ -14,6 +16,7 @@ public class Fichier {
 	private String nom;
 	private String chemin;
 	private ArrayList<String> lignesDuFichier = new ArrayList<String>();
+	private ArrayList<Stagiaire> listeStagiaires = new ArrayList<Stagiaire>();
 
 	// getters
 	public String getNom() {
@@ -28,6 +31,10 @@ public class Fichier {
 		return lignesDuFichier;
 	}
 
+	public ArrayList<Stagiaire> getListeStagiaires() {
+		return listeStagiaires;
+	}
+
 	// constructeurs
 	public Fichier(String nom) {
 		this.nom = nom;
@@ -35,6 +42,7 @@ public class Fichier {
 	}
 
 	public Fichier() {
+		this.chemin = cheminFichierTxt;
 
 	}
 
@@ -51,40 +59,31 @@ public class Fichier {
 
 		return message;
 	}
-	
-	// lit le fichier et ajoute chaque ligne dans un ArrayList lignesDuFichier
-		public ArrayList<String> lectureFichier() {
 
-			try (BufferedReader bufferredReader = new BufferedReader(new FileReader(getChemin()));) {
+	// lit le fichier texte et renvoie un ArrayList de Stagiaire
+	public ArrayList<Stagiaire> lectureFichier() {
 
-				String line;
-				while ((line = bufferredReader.readLine()) != null) {
-					getLignesDuFichier().add(line);
-				}
+		try (BufferedReader bufferredReader = new BufferedReader(new FileReader(getChemin()));) {
 
-			} catch (FileNotFoundException e) {
-				System.err.println(e);
-			} catch (IOException e) {
-				System.err.println(e);
+			while (bufferredReader.ready()) {
+				Stagiaire stagiaire = new Stagiaire();
+
+				stagiaire.setNom(bufferredReader.readLine());
+				stagiaire.setPrenom(bufferredReader.readLine());
+				stagiaire.setDepartement(bufferredReader.readLine());
+				stagiaire.setLibelleFormation(bufferredReader.readLine());
+				stagiaire.setAnnee(Integer.parseInt(bufferredReader.readLine()));
+				bufferredReader.readLine();
+				listeStagiaires.add(stagiaire);
 			}
-			return getLignesDuFichier();
+			bufferredReader.close();
+
+		} catch (FileNotFoundException e) {
+			System.err.println(e);
+		} catch (IOException e) {
+			System.err.println(e);
 		}
-		// lit le fichier et ajoute chaque ligne dans un ArrayList lignesDuFichier
-				public void lectureSimple() {
-
-					try (BufferedReader bufferredReader = new BufferedReader(new FileReader(getChemin()));) {
-
-						String line;
-						while ((line = bufferredReader.readLine()) != null) {
-							getLignesDuFichier().add(line);
-						}
-
-					} catch (FileNotFoundException e) {
-						System.err.println(e);
-					} catch (IOException e) {
-						System.err.println(e);
-					}					
-				}
-
+		return getListeStagiaires();
+	}
 
 }
