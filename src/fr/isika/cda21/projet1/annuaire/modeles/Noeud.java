@@ -86,20 +86,20 @@ public class Noeud {
 	// }
 
 	// rechercher un noeud
-	// public boolean rechercherNoeud(Stagiaire stagiaireARechercher) {
+//	 public boolean rechercherNoeud(Stagiaire stagiaireARechercher) {
 //
-	// if (this.cle.compareTo(stagiaireARechercher) == 0) {
-	// return true;
-	// }
+//	 if (this.cle.compareTo(stagiaireARechercher) == 0) {
+//	 return true;
+//	 }
 //
-	// if (this.cle.compareTo(stagiaireARechercher) > 0) {
-	// if (this.getFilsDroit() == null) {
-	// return false;
-	// } else {
-	// return this.getFilsDroit().rechercherNoeud(stagiaireARechercher);
-	// }
-	// } else {
-	// if (this.getFilsGauche() == null) {
+//	 if (this.cle.compareTo(stagiaireARechercher) > 0) {
+//	 if (this.getFilsDroit() == -1) {
+//	 return false;
+//	 } else {
+//	 return this.getFilsDroit().rechercherNoeud(stagiaireARechercher);
+//	 }
+//	 } else {
+//	 if (this.getFilsGauche() == null) {
 	// return false;
 	// } else {
 	// return this.getFilsGauche().rechercherNoeud(stagiaireARechercher);

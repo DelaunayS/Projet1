@@ -11,7 +11,7 @@ public class Annuaire {
 
 	// attributs
 	private Noeud premierNoeud;
-	private ArrayList<Noeud> listeDeNoeuds;
+	private ArrayList<Stagiaire> listeDeStagiaires;
 	private FichierBinaire fichierBin;
 	private int indexCompteur;
 	private RandomAccessFile raf;
@@ -20,14 +20,14 @@ public class Annuaire {
 	public Annuaire() {
 		super();
 		this.premierNoeud = null;
-		this.listeDeNoeuds = new ArrayList<Noeud>();
-		
+		this.listeDeStagiaires = new ArrayList<Stagiaire>();
+
 		// alphaAnnuaire(premierNoeud, listeAlpha);
 		fichierBin = new FichierBinaire("Fichier Binaire");
 		this.indexCompteur = 0;
-		try {			
+		try {
 			raf = new RandomAccessFile(FichierBinaire.cheminFichierBin, "rw");
-			remplirAnnuaire();;
+			// remplirAnnuaire();;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -43,12 +43,20 @@ public class Annuaire {
 		this.premierNoeud = premierNoeud;
 	}
 
-	public ArrayList<Noeud> getListeDeNoeuds() {
-		return listeDeNoeuds;
+	public ArrayList<Stagiaire> getListeDeStagiaires() {
+		return listeDeStagiaires;
 	}
 
-	public void setListeDeNoeuds(ArrayList<Noeud> listeDeNoeuds) {
-		this.listeDeNoeuds = listeDeNoeuds;
+	public void setListeDeStagiaires(ArrayList<Stagiaire> listeDeStagiaires) {
+		this.listeDeStagiaires = listeDeStagiaires;
+	}
+
+	public RandomAccessFile getRaf() {
+		return raf;
+	}
+
+	public void setRaf(RandomAccessFile raf) {
+		this.raf = raf;
 	}
 
 	public FichierBinaire getFichierBin() {
@@ -68,6 +76,8 @@ public class Annuaire {
 	}
 
 	// methodes
+
+	// ajout d'un stagiaire dans l'annuaire
 	public void ajouterStagiaire(Stagiaire stagiaireAAjouter) throws IOException {
 		if (premierNoeud == null) {
 			premierNoeud = new Noeud(stagiaireAAjouter, -1, -1);
@@ -76,18 +86,18 @@ public class Annuaire {
 			setIndexCompteur(getIndexCompteur() + 1);
 		} else {
 			raf.seek(0);
-			Noeud noeud = fichierBin.lectureFichierBin(raf);		
+			Noeud noeud = fichierBin.lectureFichierBin(raf);
 			ajouterNoeud(stagiaireAAjouter, noeud);
 		}
 	}
 
-	public void ajouterNoeud(Stagiaire stagiaireAAjouter, Noeud courant) throws IOException {
+	// ajout d'un noeud dans l'annuaire
+	private void ajouterNoeud(Stagiaire stagiaireAAjouter, Noeud courant) throws IOException {
 
 		Noeud noeudAjouter = new Noeud(stagiaireAAjouter, -1, -1);
-				
 		int test = courant.getCle().compareTo(stagiaireAAjouter);
-		
-		// Parcours du sous-arbre gauche
+
+		// Parcours du sous-annuaire gauche
 		if (test < 0) {
 
 			// Le fils gauche est vide
@@ -97,45 +107,72 @@ public class Annuaire {
 				raf.seek(raf.length());
 				fichierBin.sauvegardeFichierBin(noeudAjouter, raf);
 				setIndexCompteur(getIndexCompteur() + 1);
-
 			}
 			// Le fils gauche n'est pas vide
 			else {
-				// On va dans le sous-arbre gauche
+				// On va dans le sous-annuaire gauche
 				raf.seek(courant.getFilsGauche() * FichierBinaire.TAILLE_NOEUD);
 				Noeud noeudGauche = fichierBin.lectureFichierBin(raf);
 				ajouterNoeud(stagiaireAAjouter, noeudGauche);
 			}
 		}
-		// Parcours du sous-arbre droit
-		else if (test > 0) {			
+		// Parcours du sous-annuaire droit
+		else if (test > 0) {
 			if (courant.getFilsDroit() == -1) {
 				raf.seek(raf.getFilePointer() - 4);
 				raf.writeInt(indexCompteur);
 				raf.seek(raf.length());
 				fichierBin.sauvegardeFichierBin(noeudAjouter, raf);
 				setIndexCompteur(getIndexCompteur() + 1);
-
 			}
 			// Le fils droit n'est pas vide
 			else {
-				// on va dans le sous-arbre droit
+				// on va dans le sous-annuaire droit
 				raf.seek(courant.getFilsDroit() * FichierBinaire.TAILLE_NOEUD);
 				Noeud noeudDroit = fichierBin.lectureFichierBin(raf);
 				ajouterNoeud(stagiaireAAjouter, noeudDroit);
 			}
-		}		
+		}
 	}
-
-	
 
 	// pour remplir l'annuaire avec le fichier
 	private void remplirAnnuaire() throws IOException {
 		Fichier fichierTxt = new Fichier("Fichier texte");
 		fichierTxt.lectureFichier();
 		for (Stagiaire stagiaire : fichierTxt.getListeStagiaires()) {
-			System.out.println(stagiaire);
 			ajouterStagiaire(stagiaire);
+		}
+	}
+
+	// affichage de l'annuaire dans l'ordre alphabétique
+	public void ordreAlpha() throws IOException {
+		raf.seek(0);
+		parcoursGND(fichierBin.lectureFichierBin(raf), listeDeStagiaires);
+	}
+
+	// pour faire un parcours infixe
+	private void parcoursGND(Noeud noeudCourant, ArrayList<Stagiaire> listeDeStagiaires) throws IOException {
+
+		// on positionne le pointeur pour pouvoir lire l'index gauche puis le droit
+		raf.seek(raf.getFilePointer() - 8);
+		int indexNoeudGauche = raf.readInt();
+		int indexNoeudDroit = raf.readInt();
+
+		// on vérifie s'il existe un noeud à gauche
+		if (indexNoeudGauche != -1) {
+
+			raf.seek(indexNoeudGauche * FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudGauche = fichierBin.lectureFichierBin(raf);
+			parcoursGND(noeudGauche, listeDeStagiaires);
+		}
+
+		System.out.println(noeudCourant);
+		listeDeStagiaires.add(noeudCourant.getCle());
+
+		if (indexNoeudDroit != -1) {
+			raf.seek(indexNoeudDroit * FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudDroit = fichierBin.lectureFichierBin(raf);
+			parcoursGND(noeudDroit, listeDeStagiaires);
 		}
 	}
 
@@ -161,34 +198,63 @@ public class Annuaire {
 		for (int i = 0; i < nombreNoeud; i++) {
 			System.out.println(fichierBin.lectureFichierBin(raf));
 		}
-		System.out.println("Taille : "+raf.length()/168);
+		System.out.println("Taille : " + raf.length() / 168);
 
 	}
 
-	public void afficherListeNoeuds() {
-		for (Noeud noeud : listeDeNoeuds) {
-			System.out.println(noeud.getCle().getNom());
+	// rechercher dans l'annuaire
+	public Stagiaire rechercher(Stagiaire stagiaireARechercher) throws IOException {
+		raf.seek(0);
+		return rechercher(fichierBin.lectureFichierBin(raf), stagiaireARechercher);
+	}
+
+	private Stagiaire rechercher(Noeud noeudCourant, Stagiaire stagiaireARechercher) throws IOException {
+		Noeud noeud = rechercherRecursif(noeudCourant, stagiaireARechercher);
+		if (noeud != null) {
+			return noeud.getCle();
 		}
+		return null;
 	}
 
-	// rechercher dans l'arbre
-//	public void rechercherAnnuaire(Stagiaire stagiaireARechercher) {
-//		if (premierNoeud.rechercherNoeud(stagiaireARechercher)) {
-//			System.out.println(stagiaireARechercher + " est présent");
-//		} else {
-//			System.out.println(stagiaireARechercher + " n'est pas  présent");
-//		}
-//
-//	}
-	// sauvegarder l'annuaire
-	public void sauvegarderAnnuaire() {
+	private Noeud rechercherRecursif(Noeud noeudCourant, Stagiaire stagiaireARechercher) throws IOException {
 
-		// fichierBin.sauvegardeFichierBin(getListeAlpha());
-	}
+		if (noeudCourant == null) {
+			return null;
+		}
+		int test = noeudCourant.getCle().compareTo(stagiaireARechercher);
 
-	// test lecture fichier binaire
-	public void lectureFichierBinaire() {
-		// fichierBin.lectureFichierBin();
+		if (test == 0) {
+			System.out.println(test);
+			System.out.println("recherche aboutie :");
+			return noeudCourant;
+		}
+
+		raf.seek(raf.getFilePointer() - 8);
+		int indexNoeudGauche = raf.readInt();
+		int indexNoeudDroit = raf.readInt();
+	
+		
+		System.out.println("indexNoeudGauche : " + indexNoeudGauche);
+		System.out.println("indexNoeudDroit : " + indexNoeudDroit);
+		System.out.println("noueud courant : "+noeudCourant);
+		
+
+		if (indexNoeudGauche != -1 && test < 0) {
+			raf.seek(indexNoeudGauche * FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudGauche = fichierBin.lectureFichierBin(raf);
+			return rechercherRecursif(noeudGauche, stagiaireARechercher);
+
+		}
+
+		if (indexNoeudDroit != -1 && test > 0) {
+			raf.seek(indexNoeudDroit * FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudDroit = fichierBin.lectureFichierBin(raf);
+			return rechercherRecursif(noeudDroit, stagiaireARechercher);
+
+		}
+
+		return null;
+
 	}
 
 }
