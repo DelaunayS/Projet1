@@ -10,7 +10,7 @@ import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 public class FichierBinaire {
 
 	public static String cheminFichierBin = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.BIN";
-	public final static int TAILLE_NOEUD = 168;
+	public final static int TAILLE_NOEUD = 172;
 
 	// attributs
 	private String nom;
@@ -45,9 +45,16 @@ public class FichierBinaire {
 	public void sauvegardeFichierBin(Noeud noeud, RandomAccessFile raf) {
 
 		/*
-		 * un stagiaire : => 160 nom 30 caractères => 30*2=60 prenom 30 caractères =>
-		 * 30*2=60 departement 3 caractères => 3*2 =6 formation 15 caractères => 15*2=30
+		 * un stagiaire : => 172
+		 * nom 30 caractères => 30*2=60 
+		 * prenom 30 caractères => 30*2=60 
+		 * departement 3 caractères => 3*2 =6 
+		 * formation 15 caractères => 15*2=30
 		 * annee entier => 4
+		 * doublon =>4
+		 * indexNoeudGauche =>4
+		 * indexNoeudDroit =>4 
+		 * 
 		 */
 
 		try {
@@ -56,6 +63,7 @@ public class FichierBinaire {
 			raf.writeChars(noeud.getCle().departementLongBin());
 			raf.writeChars(noeud.getCle().formationLongBin());
 			raf.writeInt(noeud.getCle().getAnnee());
+			raf.writeInt(noeud.getDoublon());
 			raf.writeInt(noeud.getFilsGauche());
 			raf.writeInt(noeud.getFilsDroit());
 		} catch (IOException e) {
@@ -77,6 +85,7 @@ public class FichierBinaire {
 			String departement = "";
 			String formation = "";
 			int annee = 0;
+			int doublon=0;
 			int filsGauche = 0;
 			int filsDroit = 0;
 
@@ -103,11 +112,14 @@ public class FichierBinaire {
 				formation += raf.readChar();
 			}
 			stagiaire.setLibelleFormation(formation.trim());
+			
 			// lecture de l'année
-
 			annee += raf.readInt();
-
 			stagiaire.setAnnee(annee);
+			
+			//lecture du doublon
+			doublon=raf.readInt();
+			noeud.setDoublon(doublon);
 
 			// lecture fils gauche
 			filsGauche = raf.readInt();

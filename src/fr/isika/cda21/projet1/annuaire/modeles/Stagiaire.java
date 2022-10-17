@@ -6,8 +6,7 @@ public class Stagiaire {
 	public static final int TAILLE_MAX = 30;
 	public static final int TAILLE2_MAX = 15;
 	public static final int TAILLE3_MAX = 3;
-	public static final int TAILLE4_MAX = 4;
-
+	
 	// Déclaration des attributs
 	private String nom;
 	private String prenom;
@@ -22,8 +21,12 @@ public class Stagiaire {
 		this.departement = departement;
 		this.libelleFormation = libelleFormation;
 		this.annee = annee;
-
 	}
+	
+	public Stagiaire(String nom) {
+		this.nom=nom;
+	}
+
 
 	public Stagiaire() {
 
@@ -80,15 +83,7 @@ public class Stagiaire {
 	// methode compareTo
 
 	public int compareTo(Stagiaire myStagiaire) {
-		if (myStagiaire.getNom().compareTo(this.nom) == 0) {
-			if (myStagiaire.getPrenom().compareTo(this.prenom) == 0) {
-				return myStagiaire.getLibelleFormation().compareTo(this.libelleFormation);
-			} else {
-				return myStagiaire.getPrenom().compareTo(this.prenom);
-			}
-		} else {
-			return myStagiaire.getNom().compareTo(this.nom);
-		}
+		return myStagiaire.getNom().compareTo(this.nom);		
 	}
 
 	// methodes pour créer des attributs longs pour le fichier binaire
