@@ -8,6 +8,7 @@ import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.FichierBinaire;
 
 public class AjouterAnnuaire {
+	
 	private FichierBinaire fichierBin;
 	private RandomAccessFile raf;
 	private Noeud premierNoeud;
@@ -26,6 +27,14 @@ public class AjouterAnnuaire {
 
 	public void setIndexCompteur(int indexCompteur) {
 		this.indexCompteur = indexCompteur;
+	}	
+
+	public Noeud getPremierNoeud() {
+		return premierNoeud;
+	}
+
+	public void setPremierNoeud(Noeud premierNoeud) {
+		this.premierNoeud = premierNoeud;
 	}
 
 	// ajout d'un stagiaire dans l'annuaire

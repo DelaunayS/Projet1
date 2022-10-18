@@ -151,7 +151,7 @@ public class VuePrincipale extends Scene {
 
 
 		
-		annuaire.ordreAlpha();
+		//annuaire.ordreAlpha();
 		
 		
 		ObservableList<Stagiaire> listeObservableStagiaires =

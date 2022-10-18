@@ -5,6 +5,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import fr.isika.cda21.projet1.annuaire.methods.AjouterAnnuaire;
+import fr.isika.cda21.projet1.annuaire.methods.ParcourirAnnuaire;
 import fr.isika.cda21.projet1.annuaire.methods.RechercherAnnuaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.Fichier;
 import fr.isika.cda21.projet1.annuaire.utilitaires.FichierBinaire;
@@ -16,9 +17,10 @@ public class Annuaire {
 	private ArrayList<Stagiaire> listeDeStagiaires;
 	private FichierBinaire fichierBin;
 	private int indexCompteur;
-	private RandomAccessFile raf;	
+	private RandomAccessFile raf;
 	private AjouterAnnuaire ajouterAnnuaire;
 	private RechercherAnnuaire rechercherAnnuaire;
+	private ParcourirAnnuaire parcourirAnnuaire;
 
 	// constructeur
 	public Annuaire() {
@@ -31,11 +33,12 @@ public class Annuaire {
 		this.indexCompteur = 0;
 		try {
 			raf = new RandomAccessFile(FichierBinaire.cheminFichierBin, "rw");
-			
-			this.ajouterAnnuaire=new AjouterAnnuaire(fichierBin,raf,premierNoeud,indexCompteur);
-			//remplirAnnuaire();
-			this.rechercherAnnuaire= new RechercherAnnuaire(fichierBin, raf);
-			;
+
+			this.ajouterAnnuaire = new AjouterAnnuaire(fichierBin, raf, premierNoeud, indexCompteur);
+			// remplirAnnuaire();
+			this.rechercherAnnuaire = new RechercherAnnuaire(fichierBin, raf);
+			this.parcourirAnnuaire = new ParcourirAnnuaire(fichierBin, raf, listeDeStagiaires);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,89 +84,11 @@ public class Annuaire {
 
 	public void setIndexCompteur(int indexCompteur) {
 		this.indexCompteur = indexCompteur;
-	}	
-		
+	}
 
 	// methodes
 
-	
-//
-//	// ajout d'un stagiaire dans l'annuaire
-//	public void ajouterStagiaire(Stagiaire stagiaireAAjouter) throws IOException {
-//		if (premierNoeud == null) {
-//			premierNoeud = new Noeud(stagiaireAAjouter, -1, -1);
-//			raf.seek(0);
-//			fichierBin.sauvegardeFichierBin(premierNoeud, raf);
-//			setIndexCompteur(getIndexCompteur() + 1);
-//		} else {
-//			raf.seek(0);
-//			Noeud noeud = fichierBin.lectureFichierBin(raf);
-//			ajouterNoeud(stagiaireAAjouter, noeud);
-//		}
-//	}
-//
-//	// ajout d'un noeud dans l'annuaire
-//	private void ajouterNoeud(Stagiaire stagiaireAAjouter, Noeud courant) throws IOException {
-//
-//		Noeud noeudAjouter = new Noeud(stagiaireAAjouter, -1, -1);
-//		int test = courant.getCle().compareTo(stagiaireAAjouter);
-//
-//		// cas d'un doublon de nom
-//		if (test == 0) {
-//			if (courant.getDoublon() == -1) {
-//				raf.seek(raf.getFilePointer() - 12);
-//				courant.setDoublon((int) raf.length() / FichierBinaire.TAILLE_NOEUD);
-//				raf.writeInt(courant.getDoublon());
-//				raf.seek(raf.length());
-//				fichierBin.sauvegardeFichierBin(noeudAjouter, raf);
-//				setIndexCompteur(getIndexCompteur() + 1);
-//			} else {
-//				raf.seek(courant.getDoublon() * FichierBinaire.TAILLE_NOEUD);
-//				Noeud noeudDoublon = fichierBin.lectureFichierBin(raf);
-//				ajouterNoeud(stagiaireAAjouter, noeudDoublon);
-//			}
-//
-//		}
-//
-//		// Parcours du sous-annuaire gauche
-//		else if (test < 0) {
-//
-//			// Le fils gauche est vide
-//			if (courant.getFilsGauche() == -1) {
-//				raf.seek(raf.getFilePointer() - 8);
-//				raf.writeInt(indexCompteur);
-//				raf.seek(raf.length());
-//				fichierBin.sauvegardeFichierBin(noeudAjouter, raf);
-//				setIndexCompteur(getIndexCompteur() + 1);
-//			}
-//			// Le fils gauche n'est pas vide
-//			else {
-//				// On va dans le sous-annuaire gauche
-//				raf.seek(courant.getFilsGauche() * FichierBinaire.TAILLE_NOEUD);
-//				Noeud noeudGauche = fichierBin.lectureFichierBin(raf);
-//				ajouterNoeud(stagiaireAAjouter, noeudGauche);
-//			}
-//		}
-//		// Parcours du sous-annuaire droit
-//		else if (test > 0) {
-//			if (courant.getFilsDroit() == -1) {
-//				raf.seek(raf.getFilePointer() - 4);
-//				raf.writeInt(indexCompteur);
-//				raf.seek(raf.length());
-//				fichierBin.sauvegardeFichierBin(noeudAjouter, raf);
-//				setIndexCompteur(getIndexCompteur() + 1);
-//			}
-//			// Le fils droit n'est pas vide
-//			else {
-//				// on va dans le sous-annuaire droit
-//				raf.seek(courant.getFilsDroit() * FichierBinaire.TAILLE_NOEUD);
-//				Noeud noeudDroit = fichierBin.lectureFichierBin(raf);
-//				ajouterNoeud(stagiaireAAjouter, noeudDroit);
-//			}
-//		}
-//	}
-
-	// pour remplir l'annuaire avec le fichier
+	// pour remplir l'annuaire avec le fichier texte
 	private void remplirAnnuaire() throws IOException {
 		Fichier fichierTxt = new Fichier("Fichier texte");
 		fichierTxt.lectureFichier();
@@ -172,15 +97,16 @@ public class Annuaire {
 			ajouterAnnuaire.ajouterStagiaire(stagiaire);
 		}
 	}
-	
+
+	// afficher la recherche par Nom en console
 	public void afficherRechercheParNom(String nom) throws IOException {
-		rechercherAnnuaire.rechercheParNom(nom);		
+		rechercherAnnuaire.rechercheParNom(nom);
 	}
 
 	// affichage de l'annuaire dans l'ordre alphabétique
 	public void ordreAlpha() throws IOException {
 		raf.seek(0);
-		parcoursGND(fichierBin.lectureFichierBin(raf), listeDeStagiaires);
+		parcourirAnnuaire.parcoursGND(fichierBin.lectureFichierBin(raf), listeDeStagiaires);
 	}
 
 	// pour faire un parcours infixe
@@ -204,12 +130,10 @@ public class Annuaire {
 				// on récupère la position du doublon
 				raf.seek(noeudCourant.getDoublon() * FichierBinaire.TAILLE_NOEUD);
 				noeudDoublon = fichierBin.lectureFichierBin(raf);
-				System.out.println(noeudDoublon);
 				listeDeStagiaires.add(noeudDoublon.getCle());
 			} while (noeudDoublon.getDoublon() != -1);
 		}
 
-		System.out.println(noeudCourant);
 		listeDeStagiaires.add(noeudCourant.getCle());
 
 		if (noeudCourant.getFilsDroit() != -1) {
@@ -219,7 +143,7 @@ public class Annuaire {
 		}
 	}
 
-	// affiche l'annuaire
+	// affiche l'annuaire dans l'ordre du fichier binaire
 	public void visualiserAnnuaire() throws IOException {
 		raf.seek(0);
 		int nombreNoeud = (int) raf.length() / FichierBinaire.TAILLE_NOEUD;
@@ -229,60 +153,194 @@ public class Annuaire {
 		System.out.println("Taille : " + raf.length());
 	}
 
-	
-	
 	// Supprimer
-//
-//	public void supprimer(Stagiaire stagiaireASupprimer) throws IOException {
-//
-//		Noeud noeud = rechercher(stagiaireASupprimer);
-//		if (noeud == null) {
-//			System.out.println("Personne à supprimer");
-//		} else {
-//			raf.seek(raf.getFilePointer() - 168);
-//			supprimer(fichierBin.lectureFichierBin(raf), stagiaireASupprimer);
-//		}
-//	}
-//
-//	private Noeud supprimer(Noeud noeudCourant, Stagiaire stagiaireASupprimer) throws IOException {
-//		System.out.println("Suppression de : " + noeudCourant);
-//
-//		if (noeudCourant.getFilsGauche() == -1 & noeudCourant.getFilsDroit() == -1) {
-//			System.out.println("c'est une feuille");
-//		} else if (noeudCourant.getFilsDroit() == -1) {
-//			System.out.println(noeudCourant + " sera remplacé par " + plusPetiteValeurSousAnnuaire(noeudCourant));
-//		} else if (noeudCourant.getFilsGauche() == -1) {
-//			System.out.println(noeudCourant + " sera remplacé par " + plusPetiteValeurSousAnnuaire(noeudCourant));
-//		} else {
-//			System.out.println(noeudCourant + " a deux enfants!");
-//		}
-//
-//		return null;
-//	}
 
-//	public void plusPetiteValeurSousAnnuaire(Stagiaire stagiaireARechercher) throws IOException {
-//		rechercher(stagiaireARechercher);
-//		System.out.println(rechercher(stagiaireARechercher));
-//		System.out.println();
-//		raf.seek(raf.getFilePointer() - 168);
-//		plusPetiteValeurSousAnnuaire(fichierBin.lectureFichierBin(raf));
-//	}
+	public void supprimerRacine(Stagiaire stagiaire) throws IOException {
+		rechercherAnnuaire.rechercher(stagiaire);
+		raf.seek(raf.getFilePointer() - FichierBinaire.TAILLE_NOEUD);
+		supprimerRacine(fichierBin.lectureFichierBin(raf));
+	}
 
-	private Noeud plusPetiteValeurSousAnnuaire(Noeud noeudCourant) throws IOException {
+	private void supprimerRacine(Noeud noeudCourant) throws IOException {
+
+		// cas de la feuille
+		if ((noeudCourant.getFilsGauche() == -1) && (noeudCourant.getFilsDroit() == -1)) {
+
+			// on récupère la position du noeud courant dans le fichier
+			int indexARemplacer = (int) (raf.getFilePointer() / FichierBinaire.TAILLE_NOEUD - 1);
+			parent(noeudCourant.getCle());
+
+			// on se positionne sur l'index du parent pour le remplacer par index (valeur
+			// stockée plus haut)
+			raf.seek(raf.getFilePointer() - 8);
+			if (raf.readInt() == indexARemplacer) {
+				raf.seek(raf.getFilePointer() - 4);
+				raf.writeInt(-1);
+			} else {
+				raf.writeInt(-1);
+			}
+
+			// fils droit uniquement
+		} else if ((noeudCourant.getFilsGauche() == -1)) {
+			// on stocke la position du fils droit
+			int index = noeudCourant.getFilsDroit();
+			// on se positionne sur l'index du fils droit pour le remplacer par -1
+			raf.seek(raf.getFilePointer() - 4);
+			raf.writeInt(-1);
+
+			// on récupère la position du noeud courant dans le fichier
+			int indexARemplacer = (int) (raf.getFilePointer() / FichierBinaire.TAILLE_NOEUD - 1);
+
+			// on recherche le parent du noeud courant et le pointeur se trouve à la fin du
+			// parent
+			parent(noeudCourant.getCle());
+
+			// on se positionne sur l'index du parent pour le remplacer par index (valeur
+			// stockée plus haut)
+			raf.seek(raf.getFilePointer() - 8);
+			if (raf.readInt() == indexARemplacer) {
+				raf.seek(raf.getFilePointer() - 4);
+				raf.writeInt(index);
+			} else {
+				raf.writeInt(index);
+			}
+
+			// fils gauche uniquement
+		} else if ((noeudCourant.getFilsDroit() == -1)) {
+			// on stocke la position du fils gauche
+			int index = noeudCourant.getFilsGauche();
+			// on se positionne sur l'index du fils gauche pour le remplacer par -1
+			raf.seek(raf.getFilePointer() - 8);
+			raf.writeInt(-1);
+			raf.readInt();
+
+			// on récupère la position du noeud courant dans le fichier
+			int indexARemplacer = (int) (raf.getFilePointer() / FichierBinaire.TAILLE_NOEUD - 1);
+			// on recherche le parent du noeud courant et le pointeur se trouve à la fin du
+			// parent
+			parent(noeudCourant.getCle());
+
+			// on se positionne sur l'index du parent pour le remplacer par index (valeur
+			// stockée plus haut)
+			raf.seek(raf.getFilePointer() - 8);
+			if (raf.readInt() == indexARemplacer) {
+				raf.seek(raf.getFilePointer() - 4);
+				raf.writeInt(index);
+			} else {
+				raf.writeInt(index);
+			}
+		}
+
+		// 2 enfants
+		else {
+
+			if (noeudCourant.getDoublon() == -1) {
+
+				// pointeur temporaire pour garder la position de la racine
+				int pointeurTemporaire = (int) (raf.getFilePointer());
+
+				// instancie le noeudSuccesseur de la racine
+				Noeud noeudSuccesseur = successeur(noeudCourant);
+
+				// récupère la position du successeur dans le fichier binaire
+				int indexARemplacer = (int) raf.getFilePointer() / FichierBinaire.TAILLE_NOEUD - 1;
+
+				// instancie le noeudParent du successeur
+				Noeud noeudParent = parent(noeudCourant, noeudSuccesseur.getCle());
+
+				/*
+				 * on se positionne sur l'index du parent pour le remplacer par -1 ainsi le
+				 * parent du successeur ne pointe plus vers le successeur
+				 */
+
+				raf.seek(raf.getFilePointer() - 8);
+				if (raf.readInt() == indexARemplacer) {
+					raf.seek(raf.getFilePointer() - 4);
+					raf.writeInt(-1);
+				} else {
+					raf.writeInt(-1);
+				}
+
+				// on se positionne à la racine des deux enfants
+				raf.seek(pointeurTemporaire - FichierBinaire.TAILLE_NOEUD);
+
+				// on écrit les valeurs du successeur à la place de la racine
+				raf.writeChars(noeudSuccesseur.getCle().nomLongBin());
+				raf.writeChars(noeudSuccesseur.getCle().prenomLongBin());
+				raf.writeChars(noeudSuccesseur.getCle().departementLongBin());
+				raf.writeChars(noeudSuccesseur.getCle().formationLongBin());
+				raf.writeInt(noeudSuccesseur.getCle().getAnnee());
+
+			}
+
+		}
+	}
+
+	//
+	public void parent(Stagiaire stagiaire) throws IOException {
+		raf.seek(0);
+		parent(fichierBin.lectureFichierBin(raf), stagiaire);
+	}
+
+	private Noeud parent(Noeud noeudCourant, Stagiaire stagiaire) throws IOException {
+
+		int test = noeudCourant.getCle().compareTo(stagiaire);
+		int pointeurTemporaire = (int) raf.getFilePointer();
+		Noeud parent = new Noeud();
+		if (test == 0) {
+			return null;
+		} else {
+			while (test != 0) {
+				pointeurTemporaire = (int) raf.getFilePointer();
+
+				// on stocke noeud Courant dans parent
+				parent = noeudCourant;
+				if (test < 0) {
+					raf.seek(noeudCourant.getFilsGauche() * FichierBinaire.TAILLE_NOEUD);
+					// noeudCourant devient le fils gauche
+					noeudCourant = fichierBin.lectureFichierBin(raf);
+					// on teste avec la nouvelle valeur
+					test = noeudCourant.getCle().compareTo(stagiaire);
+				} else if (test > 0) {
+
+					raf.seek(noeudCourant.getFilsDroit() * FichierBinaire.TAILLE_NOEUD);
+					// noeudCourant devient le fils droit
+					noeudCourant = fichierBin.lectureFichierBin(raf);
+					// on teste avec la nouvelle valeur
+					test = noeudCourant.getCle().compareTo(stagiaire);
+				}
+			}
+			// afin que le pointeur soit à la fin du parent
+			raf.seek(pointeurTemporaire);
+			System.out.println("pointeur à la sortie :" + raf.getFilePointer());
+			System.out.println(parent);
+			return parent;
+		}
+	}
+
+	// afficher le successeur du Stagiaire
+	public void successeur(Stagiaire stagiaireARechercher) throws IOException {
+		rechercherAnnuaire.rechercher(stagiaireARechercher);
+		raf.seek(raf.getFilePointer() - FichierBinaire.TAILLE_NOEUD);
+		successeur(fichierBin.lectureFichierBin(raf));
+	}
+
+	// renvoie le successeur du Noeud courant
+	private Noeud successeur(Noeud noeudCourant) throws IOException {
 
 		raf.seek(raf.getFilePointer());
 
 		if (noeudCourant == null) {
 			throw new NullPointerException();
 		}
-		if (noeudCourant.getFilsGauche() == -1) {
-			return noeudCourant;
-		}
-		raf.seek(noeudCourant.getFilsGauche() * FichierBinaire.TAILLE_NOEUD);
-		Noeud noeudGauche = fichierBin.lectureFichierBin(raf);
-		return plusPetiteValeurSousAnnuaire(noeudGauche);
-	}
 
-	
+		raf.seek(noeudCourant.getFilsDroit() * FichierBinaire.TAILLE_NOEUD);
+		Noeud noeudDroit = fichierBin.lectureFichierBin(raf);
+		while (noeudDroit.getFilsGauche() != -1) {
+			raf.seek(noeudDroit.getFilsGauche() * FichierBinaire.TAILLE_NOEUD);
+			noeudDroit = fichierBin.lectureFichierBin(raf);
+		}
+		return noeudDroit;
+	}
 
 }
