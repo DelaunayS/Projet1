@@ -19,7 +19,7 @@ public class Annuaire {
 	private FichierBinaire fichierBin;
 	private int indexCompteur;
 	private RandomAccessFile raf;
-	private AjouterAnnuaire ajouterAnnuaire;
+	private AjouterAnnuaire ajouterAnnuaire;	
 	private RechercherAnnuaire rechercherAnnuaire;
 	private ParcourirAnnuaire parcourirAnnuaire;
 	private SupprimerAnnuaire supprimerAnnuaire;
@@ -29,22 +29,24 @@ public class Annuaire {
 		super();
 		this.premierNoeud = null;
 		this.listeDeStagiaires = new ArrayList<Stagiaire>();
-		
+
 		fichierBin = new FichierBinaire("Fichier Binaire");
-		
+
 		this.indexCompteur = 0;
-		
+
 		try {
 			raf = new RandomAccessFile(FichierBinaire.cheminFichierBin, "rw");
-
-			this.ajouterAnnuaire = new AjouterAnnuaire(fichierBin, raf, premierNoeud, indexCompteur);
-			if (raf.length()==0) {
-				remplirAnnuaire();
-			};			
-			this.rechercherAnnuaire = new RechercherAnnuaire(fichierBin, raf);
-			this.parcourirAnnuaire = new ParcourirAnnuaire(fichierBin, raf, listeDeStagiaires);
-			this.supprimerAnnuaire = new SupprimerAnnuaire(fichierBin, raf,rechercherAnnuaire);
 			
+			this.rechercherAnnuaire = new RechercherAnnuaire(fichierBin, raf);
+			this.ajouterAnnuaire = new AjouterAnnuaire(fichierBin, raf, premierNoeud);
+			if (raf.length() == 0) {
+				remplirAnnuaire();
+			}
+			;
+
+			this.parcourirAnnuaire = new ParcourirAnnuaire(fichierBin, raf, listeDeStagiaires);
+			this.supprimerAnnuaire = new SupprimerAnnuaire(fichierBin, raf, rechercherAnnuaire);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +93,7 @@ public class Annuaire {
 	public void setIndexCompteur(int indexCompteur) {
 		this.indexCompteur = indexCompteur;
 	}
-	
+
 	public AjouterAnnuaire getAjouterAnnuaire() {
 		return ajouterAnnuaire;
 	}
@@ -99,6 +101,8 @@ public class Annuaire {
 	public void setAjouterAnnuaire(AjouterAnnuaire ajouterAnnuaire) {
 		this.ajouterAnnuaire = ajouterAnnuaire;
 	}
+	
+
 
 	public RechercherAnnuaire getRechercherAnnuaire() {
 		return rechercherAnnuaire;
@@ -123,7 +127,7 @@ public class Annuaire {
 	public void setSupprimerAnnuaire(SupprimerAnnuaire supprimerAnnuaire) {
 		this.supprimerAnnuaire = supprimerAnnuaire;
 	}
-	
+
 	/*
 	 * Méthodes
 	 */
@@ -133,9 +137,13 @@ public class Annuaire {
 		Fichier fichierTxt = new Fichier("Fichier texte");
 		fichierTxt.lectureFichier();
 		for (Stagiaire stagiaire : fichierTxt.getListeStagiaires()) {
-
 			ajouterAnnuaire.ajouterStagiaire(stagiaire);
 		}
+	}
+
+	// ajouter stagiaire
+	public void ajouterStagiaire(Stagiaire stagiaire) throws IOException {
+		ajouterAnnuaire.ajouterStagiaire(stagiaire);
 	}
 
 	// afficher la recherche par Nom en console
@@ -146,21 +154,23 @@ public class Annuaire {
 	// affichage de l'annuaire dans l'ordre alphabétique
 	public void ordreAlpha() throws IOException {
 		raf.seek(0);
+		setListeDeStagiaires(new ArrayList<Stagiaire>());
 		parcourirAnnuaire.parcoursGND(fichierBin.lectureFichierBin(raf), listeDeStagiaires);
 	}
-	//supprimer un stagiaire
+
+	// supprimer un stagiaire
 	public void supprimerStagiaire(Stagiaire stagiaire) throws IOException {
-		supprimerAnnuaire.supprimerRacine(stagiaire);		
+		supprimerAnnuaire.supprimerRacine(stagiaire);
 	}
-	
+
 	// affiche l'annuaire dans l'ordre du fichier binaire
 	public void visualiserAnnuaire() throws IOException {
 		raf.seek(0);
 		int nombreNoeud = (int) raf.length() / FichierBinaire.TAILLE_NOEUD;
 		for (int i = 0; i < nombreNoeud; i++) {
-			System.out.println(fichierBin.lectureFichierBin(raf));
+			System.out.println("n° "+i+" : "+fichierBin.lectureFichierBin(raf));
 		}
 		System.out.println("Taille : " + raf.length());
-	}	
+	}
 
 }

@@ -41,16 +41,11 @@ public class ParcourirAnnuaire {
 		// on vérifie les doublons
 		if (noeudCourant.getDoublon() != -1) {
 			Noeud noeudDoublon = new Noeud();
-			do {
-				// on récupère la position du doublon
-				raf.seek(noeudCourant.getDoublon() * FichierBinaire.TAILLE_NOEUD);
-				noeudDoublon = fichierBin.lectureFichierBin(raf);
-				System.out.println(noeudDoublon);
-				getListeDeStagiaires().add(noeudDoublon.getCle());
-			} while (noeudDoublon.getDoublon() != -1);
+			raf.seek(noeudCourant.getDoublon() * FichierBinaire.TAILLE_NOEUD);
+			noeudDoublon = fichierBin.lectureFichierBin(raf);
+			lireDoublons(noeudDoublon,listeDeStagiaires);
 		}
-
-		System.out.println(noeudCourant);
+		
 		listeDeStagiaires.add(noeudCourant.getCle());
 
 		if (noeudCourant.getFilsDroit() != -1) {
@@ -60,4 +55,13 @@ public class ParcourirAnnuaire {
 		}
 	}
 
+	private void lireDoublons(Noeud noeudDoublon, ArrayList<Stagiaire> listeDeStagiaires2) throws IOException {
+		if (noeudDoublon.getDoublon()!=-1) {
+			Noeud doublonSuivant = new Noeud();
+			raf.seek(noeudDoublon.getDoublon() * FichierBinaire.TAILLE_NOEUD);
+			doublonSuivant = fichierBin.lectureFichierBin(raf);
+			lireDoublons(doublonSuivant, listeDeStagiaires2);
+		}
+		listeDeStagiaires2.add(noeudDoublon.getCle());		
+	}
 }

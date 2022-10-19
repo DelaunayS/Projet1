@@ -1,33 +1,31 @@
 package fr.isika.cda21.projet1.annuaire.vues;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
+import fr.isika.cda21.projet1.annuaire.utilitaires.FichierBinaire;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -37,14 +35,14 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-public class Formulaire extends Scene {
+public class Modifier extends Scene {
 
-	// Déclaration des attributs
+	/*----------------- DECLARATION DES ATTRIBUTS ----------------- */
+
 	private GridPane panneauRacine;
 	private Label etiquetteNom;
 	private TextField champTexteNom;
 	private static final int LARGEUR_CHAMP_TEXTE = 210;
-
 	private Label etiquettePrenom;
 	private TextField champTextePrenom;
 	private Label etiquetteDepartement;
@@ -61,7 +59,7 @@ public class Formulaire extends Scene {
 	private ComboBox<String> choixAnnee;
 	private Button boutonValider;
 	private Label etiquetteMessageErreur;
-	private static final String COULEUR_BG_LIGHT = "#f8f9fa"; 
+	private static final String COULEUR_BG_LIGHT = "#f8f9fa";
 	private static final String COULEUR_BG_PRIMARY = "#007bff";
 	private static final String COULEUR_BG_DANGER = "#dc3545";
 	private static final String COULEUR_BG_WHITE = "#ffffff";
@@ -72,18 +70,19 @@ public class Formulaire extends Scene {
 	private Tooltip infoBulleNom;
 	private Tooltip infoBullePrenom;
 	private DropShadow effetOmbrePortee;
-	private Stage nouvelleFenetre;
 	private Annuaire annuaire;
-	private Stage fenetreFormulaire;
-	// private  TableView<Stagiaire> listeStagiaires;
+	private TableView<Stagiaire> listeStagiaires;
+	private Stage fenetreModifier;
 	ObservableList<Stagiaire> listeObservableStagiaires;
 
-		// Annuaire annuaire
-	public Formulaire(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,ObservableList<Stagiaire> listeObservableStagiaires ) {
+	/*----------------- CONSTRUCTEUR SURCHARGE ----------------- */
+
+	public Modifier(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
+			ObservableList<Stagiaire> listeObservableStagiaires) {
 		super(new GridPane(), 550, 300);
-		nouvelleFenetre = new Stage();
+		fenetreModifier = new Stage();
 		panneauRacine = ((GridPane) this.getRoot());
-		panneauRacine.setStyle("-fx-background-color : floralwhite"); 
+		panneauRacine.setStyle("-fx-background-color : floralwhite");
 		etiquetteNom = new Label("NOM : ");
 		champTexteNom = new TextField();
 		champTexteNom.setMinWidth(250);
@@ -106,30 +105,33 @@ public class Formulaire extends Scene {
 		prenom = champTextePrenom.getText();
 		prenom = prenom.trim();
 		this.listeObservableStagiaires = listeObservableStagiaires;
-		
+
+		/*----------------- PARAMETRAGE DES ATTRIBUTS ----------------- */
+
+		etiquettePrenom.setFont(Font.font("Regular", FontWeight.BOLD, 13));
+
+		/*----------------- CREATION INFO-BULLE POUR LES CHAMPS DE TEXTE ----------------- */
 
 		// Création info-bulle pour le champ de texte Nom
-				infoBulleNom = new Tooltip(
-						"Nom ne comportant aucun caractère spécial, ni chiffre,\n ni accent/cédille et ayant au moins 2 lettres");
-				infoBulleNom.setStyle("-fx-background-color : " + BG_SECONDARY);
-				infoBulleNom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
-				champTexteNom.setTooltip(infoBulleNom);
-				infoBulleNom.setTextAlignment(TextAlignment.CENTER);
-		
-		// Création info-bulle pour le champ de texte Prénom
-				infoBullePrenom = new Tooltip(
-						"Prénom ne comportant aucun caractère spécial, \n ni chiffre et ayant au moins 2 lettres");
-				infoBullePrenom.setStyle("-fx-background-color : " + BG_SECONDARY);
-				infoBullePrenom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
-				champTextePrenom.setTooltip(infoBullePrenom);
-				infoBullePrenom.setTextAlignment(TextAlignment.CENTER);
-		
-				// Création étiquette et champ de texte à saisir du Prénom
-				etiquettePrenom = new Label("Prénom");
-				etiquettePrenom.setFont(Font.font("Regular", FontWeight.BOLD, 13));
-				champTextePrenom = new TextField();
 
-		
+		infoBulleNom = new Tooltip(
+				"Nom ne comportant aucun caractère spécial, ni chiffre,\n ni accent/cédille et ayant au moins 2 lettres");
+		infoBulleNom.setStyle("-fx-background-color : " + BG_SECONDARY);
+		infoBulleNom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
+		champTexteNom.setTooltip(infoBulleNom);
+		infoBulleNom.setTextAlignment(TextAlignment.CENTER);
+
+		// Création info-bulle pour le champ de texte Prénom
+
+		infoBullePrenom = new Tooltip(
+				"Prénom ne comportant aucun caractère spécial, \n ni chiffre et ayant au moins 2 lettres");
+		infoBullePrenom.setStyle("-fx-background-color : " + BG_SECONDARY);
+		infoBullePrenom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
+		champTextePrenom.setTooltip(infoBullePrenom);
+		infoBullePrenom.setTextAlignment(TextAlignment.CENTER);
+
+		/*----------------- CREATION ETIQUETTE ET CHAMP DE TEXTE A SAISIR ----------------- */
+
 		// Ajout des départements (ObservableList à paramétrer ????)
 		choixDepartement.getItems().addAll("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
 				"15", "16", "17", "18", "19", "2A", "2B", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
@@ -140,55 +142,51 @@ public class Formulaire extends Scene {
 				"974", "975", "976", "977", "978", "984", "986", "987", "988", "989");
 
 		choixCursus.setMinWidth(LARGEUR_BOUTON_CURSUS);
-
-
 		choixCursus.setMinWidth(LARGEUR_BOUTON_CURSUS);
-		
 		choixCursus.getItems().addAll("AI", "AL", "ATOD", "BOBI", "CDA");
-		
 		choixNumero.setMinWidth(LARGEUR_BOUTON_CURSUS);
-		
-		choixNumero.getItems().addAll("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-				"24", "25", "26", "27", "28", "29", "30");
 
-		
+		choixNumero.getItems().addAll("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
+				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30");
+
 		// Création bouton choix du contrat avec fixation de sa largeur
-				choixContrat = new CheckBox(" CP");
-				choixContrat.setMinWidth(LARGEUR_BOUTON_CURSUS);
-				
-		// Création HBox avec regroupement des 3 boutons de choix
-				libelleFormationHBox = new HBox();
-				libelleFormationHBox.setMinWidth(LARGEUR_CHAMP_TEXTE);
-				libelleFormationHBox.setSpacing(ESPACE_ENTRE_BOUTONS);
-				libelleFormationHBox.setAlignment(Pos.CENTER);
-				libelleFormationHBox.getChildren().addAll(choixCursus, choixNumero, choixContrat);
-		
 
-		// Création étiquette et bouton de choix de l'année de formation avec fixation de sa largeur (250/3)
-		
+		choixContrat = new CheckBox(" CP");
+		choixContrat.setMinWidth(LARGEUR_BOUTON_CURSUS);
+
+		// Création HBox avec regroupement des 3 boutons de choix
+
+		libelleFormationHBox = new HBox();
+		libelleFormationHBox.setMinWidth(LARGEUR_CHAMP_TEXTE);
+		libelleFormationHBox.setSpacing(ESPACE_ENTRE_BOUTONS);
+		libelleFormationHBox.setAlignment(Pos.CENTER);
+		libelleFormationHBox.getChildren().addAll(choixCursus, choixNumero, choixContrat);
+
+		// Création étiquette et bouton de choix de l'année de formation avec fixation
+		// de sa largeur (250/3)
+
 		choixAnnee.setMinWidth(LARGEUR_BOUTON);
-		
+
 		// Ajout des années
-		choixAnnee.getItems().addAll("2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013",
-				"2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030");
+		choixAnnee.getItems().addAll("2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009",
+				"2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022",
+				"2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030");
 
 		// Création étiquette pour affichage message d'erreur au dessus du bouton
-				// Valider
-				etiquetteMessageErreur = new Label();
-				etiquetteMessageErreur.setTextFill(Color.web(COULEUR_BG_DANGER));
-				etiquetteMessageErreur.setFont(Font.font("Regular", FontWeight.BOLD, 12));
+		// Valider
+		etiquetteMessageErreur = new Label();
+		etiquetteMessageErreur.setTextFill(Color.web(COULEUR_BG_DANGER));
+		etiquetteMessageErreur.setFont(Font.font("Regular", FontWeight.BOLD, 12));
 
-		
-		
 		// Création bouton Valider avec fixation de sa largeur (250/3)
-		
+
 		boutonValider.setMinWidth(83);
 
 		// Remplissage bouton Valider avec couleur texte et fond
-				boutonValider.setTextFill(Color.web(COULEUR_BG_WHITE));
-				boutonValider.setFont(Font.font("Regular", FontWeight.BOLD, 13));
-				boutonValider.setStyle("-fx-background-color : " + COULEUR_BG_INFO);
-		
+
+		boutonValider.setTextFill(Color.web(COULEUR_BG_WHITE));
+		boutonValider.setFont(Font.font("Regular", FontWeight.BOLD, 13));
+		boutonValider.setStyle("-fx-background-color : " + COULEUR_BG_INFO);
 
 		// Ajouts des étiquettes et boutons en tant que noeuds enfants du panneauRacine
 		panneauRacine.addRow(0, etiquetteNom, champTexteNom);
@@ -199,17 +197,41 @@ public class Formulaire extends Scene {
 		panneauRacine.addRow(5, etiquetteMessageErreur);
 		panneauRacine.addRow(6, boutonValider);
 
-		
 		panneauRacine.setPadding(new Insets(15, 20, 10, 35));
 
-	
 		panneauRacine.setVgap(20);
 		panneauRacine.setHgap(30);
 
 
+		/*----------------- JE RECUPERE LES INFOS DE LA LIGNE SUR LAQUELLE JE SUIS POSITIONNEE ----------------- */
+
+		
+		Stagiaire stagiaireselectionne = listeStagiaires.getSelectionModel().getSelectedItem();
+		String selectedFormation = stagiaireselectionne.getLibelleFormation();
+		String[] attributsFormation = selectedFormation.split(" ");
+		
+		champTexteNom.setText(stagiaireselectionne.getNom());
+		champTextePrenom.setText(stagiaireselectionne.getPrenom());
+		choixDepartement.setValue(stagiaireselectionne.getDepartement());
+		choixCursus.setValue(attributsFormation[0]);
+		choixNumero.setValue(attributsFormation[1]);
+		choixContrat.setIndeterminate(choixContrat.isSelected());
+		choixAnnee.setValue(String.valueOf(stagiaireselectionne.getAnnee()));
+
+//		for (String attribut : attributsFormation) {
+//        System.out.println(attribut);
+//        
+//		}
+//		
+//		for (int i = 0 ; i == attributsFormation.length ; i++) {
+//			
+//			c.setValue(attributsFormation[2]);
+//		}
+//		
+
 		boutonValider.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				
+
 				if ((!(nom.matches("[A-Z, ,--]+"))) || (nom.length() < 2)) {
 					System.out.println(
 							"Veuillez entrer un nom valide sans caractère spécial, \n ni chiffre, ni accent/cédille et ayant au moins 2 lettres");
@@ -220,57 +242,79 @@ public class Formulaire extends Scene {
 							" Veuillez entrer un prénom valide sans caractère spécial, \n ni chiffre et ayant au moins 2 lettres");
 				}
 
+//				stagiaireselectionne.setNom(champTexteNom.getText());
+//				stagiaireselectionne.setPrenom(champTextePrenom.getText());
+//				stagiaireselectionne.setDepartement(choixDepartement.getSelectionModel().getSelectedItem());
+//				stagiaireselectionne.setLibelleFormation(
+//						(choixCursus.getSelectionModel().getSelectedItem()) + " " +
+//						 choixNumero.getSelectionModel().getSelectedItem()+ " " +
+//						 contrat);
+//				stagiaireselectionne.setAnnee((Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem())));
+//						
+//			
 				
+	/*----------------- MODIFICATION DU FICHIER BINAIRE ----------------- */
+				
+				
+	// je crée un nouveau stagiaire avec les données modifiées 
 				
 				try {
 					annuaire.ordreAlpha();
-					annuaire.getAjouterAnnuaire().ajouterStagiaire(ajoutNouveauStagiaire());
+					annuaire.getAjouterAnnuaire().ajouterStagiaire(ajoutStagiaireModifie());
+					annuaire.getSupprimerAnnuaire().supprimerRacine(stagiaireselectionne, -1);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				
-			ObservableList<Stagiaire> listeMAJstagiaires =
-						FXCollections.observableArrayList(annuaire.getListeDeStagiaires());					
 	
+	// je crée une nouvelle liste observable et j'ajoute le stagiaire à la liste
+				
+				ObservableList<Stagiaire> listeMAJstagiaires = FXCollections
+						.observableArrayList(annuaire.getListeDeStagiaires());
+
 				listeStagiaires.getItems().removeAll(listeObservableStagiaires);
 				listeStagiaires.getItems().clear();
 				listeStagiaires.getItems().addAll(listeMAJstagiaires);
 
+
+	// je supprime le stagiaire modifié
+
 				
+				
+				/*----------------- FERMETURE DE LA FENETRE ----------------- */
+
 				Window window = boutonValider.getScene().getWindow();
-				Stage nouvelleFenetre = (Stage)boutonValider.getScene().getWindow();
+				Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
 				nouvelleFenetre.close();
-				
+
+				// effacement de tous les champs
 				champTexteNom.clear();
 				champTextePrenom.clear();
 				choixDepartement.getSelectionModel().clearSelection();
 				choixCursus.getSelectionModel().clearSelection();
 				choixNumero.getSelectionModel().clearSelection();
-				
+
 			}
-	
-			
+
 		});
 	}
 
-	public Stagiaire ajoutNouveauStagiaire() {
+	public Stagiaire ajoutStagiaireModifie() {
 		String contrat = "";
 
 		if (choixContrat.isSelected() == true) {
 			contrat = "CP";
 		}
-		
-		Stagiaire nouveauStagiaire = new Stagiaire(champTexteNom.getText(),
-				champTextePrenom.getText(),
+
+		Stagiaire stagiaireModifie = new Stagiaire(champTexteNom.getText(), champTextePrenom.getText(),
 				choixDepartement.getSelectionModel().getSelectedItem(),
-				(choixCursus.getSelectionModel().getSelectedItem() + " " +
-				choixNumero.getSelectionModel().getSelectedItem()+ " " +									
-				contrat),
+				(choixCursus.getSelectionModel().getSelectedItem() + " "
+						+ choixNumero.getSelectionModel().getSelectedItem() + " " + contrat),
 				(Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem())));
-		
-		return nouveauStagiaire;
+
+		return stagiaireModifie;
 	}
-	
+
 	public GridPane getPanneauRacine() {
 		return panneauRacine;
 	}
@@ -439,14 +483,6 @@ public class Formulaire extends Scene {
 		this.effetOmbrePortee = effetOmbrePortee;
 	}
 
-	public Stage getNouvelleFenetre() {
-		return nouvelleFenetre;
-	}
-
-	public void setNouvelleFenetre(Stage nouvelleFenetre) {
-		this.nouvelleFenetre = nouvelleFenetre;
-	}
-
 	public Annuaire getAnnuaire() {
 		return annuaire;
 	}
@@ -455,20 +491,20 @@ public class Formulaire extends Scene {
 		this.annuaire = annuaire;
 	}
 
-	public Stage getFenetreFormulaire() {
-		return fenetreFormulaire;
+	public Stage getFenetreModifier() {
+		return fenetreModifier;
 	}
 
-	public void setFenetreFormulaire(Stage fenetreFormulaire) {
-		this.fenetreFormulaire = fenetreFormulaire;
+	public void setFenetreModifier(Stage fenetreModifier) {
+		this.fenetreModifier = fenetreModifier;
 	}
 
+	public TableView<Stagiaire> getListeStagiaires() {
+		return listeStagiaires;
+	}
 
-	// ******************
-	// GETTERS ET SETTERS
-	// ******************
-
-	
-	
+	public void setListeStagiaires(TableView<Stagiaire> listeStagiaires) {
+		this.listeStagiaires = listeStagiaires;
+	}
 
 }

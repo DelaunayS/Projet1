@@ -24,13 +24,7 @@ public class SupprimerAnnuaire {
 
 	public void supprimerRacine(Stagiaire stagiaire) throws IOException {
 
-		ArrayList<Noeud> noeuds = rechercherAnnuaire.rechercher(stagiaire);
-		if (noeuds != null) {
-			raf.seek(raf.getFilePointer() - FichierBinaire.TAILLE_NOEUD);
-			supprimerRacine(fichierBin.lectureFichierBin(raf));
-		} else {
-			System.out.println("Personne à supprimer");
-		}
+		rechercherNoeudASupprimer(stagiaire);
 	}
 
 	private void supprimerRacine(Noeud noeudCourant) throws IOException {
@@ -53,7 +47,7 @@ public class SupprimerAnnuaire {
 				raf.writeInt(-1);
 			}
 
-		// fils droit uniquement
+			// fils droit uniquement
 		} else if ((noeudCourant.getFilsGauche() == -1)) {
 			// on stocke la position du fils droit
 			int index = noeudCourant.getFilsDroit();
@@ -107,9 +101,7 @@ public class SupprimerAnnuaire {
 		}
 
 		// 2 enfants
-		else {
-
-			if (noeudCourant.getDoublon() == -1) {
+		else {			
 				// pointeur temporaire pour garder la position de la racine
 				int pointeurTemporaire = (int) (raf.getFilePointer());
 
@@ -120,17 +112,17 @@ public class SupprimerAnnuaire {
 				int indexARemplacer = (int) raf.getFilePointer() / FichierBinaire.TAILLE_NOEUD - 1;
 
 				parent(noeudSuccesseur.getCle());
-				
+
 				/*
 				 * on se positionne sur l'index du parent pour le remplacer par -1 ainsi le
 				 * parent du successeur ne pointe plus vers le successeur
 				 */
 				raf.seek(raf.getFilePointer() - 8);
 				if (raf.readInt() == indexARemplacer) {
-					raf.seek(raf.getFilePointer() - 4);				
+					raf.seek(raf.getFilePointer() - 4);
 					raf.writeInt(-1);
 				} else if (raf.readInt() == indexARemplacer) {
-					raf.seek(raf.getFilePointer() - 4);					
+					raf.seek(raf.getFilePointer() - 4);
 					raf.writeInt(-1);
 				}
 
@@ -144,7 +136,7 @@ public class SupprimerAnnuaire {
 				raf.writeChars(noeudSuccesseur.getCle().formationLongBin());
 				raf.writeInt(noeudSuccesseur.getCle().getAnnee());
 			}
-		}
+		
 	}
 
 	// pour chercher le parent d'un stagiaire dans l'annuaire
@@ -211,5 +203,78 @@ public class SupprimerAnnuaire {
 		}
 		return noeudDroit;
 	}
-
+	
+	
+	public void rechercherNoeudASupprimer (Stagiaire stagiaire) throws IOException {
+		raf.seek(0);
+		int positionPere=-1;
+		rechercherNoeudASupprimer(fichierBin.lectureFichierBin(raf), stagiaire,positionPere);
+		
+	}
+	
+	public Noeud rechercherNoeudASupprimer (Noeud noeud, Stagiaire stagiaire, int positionPere) throws IOException {
+		
+		int test = noeud.getCle().compareTo(stagiaire);
+		int position=(int)raf.getFilePointer()/FichierBinaire.TAILLE_NOEUD-1;
+		
+		if (test<0) {
+			raf.seek(noeud.getFilsGauche()*FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudGauche=fichierBin.lectureFichierBin(raf);
+			return rechercherNoeudASupprimer(noeudGauche, stagiaire, position);
+		}
+		
+		if (test>0) {
+			raf.seek(noeud.getFilsDroit()*FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudDroit=fichierBin.lectureFichierBin(raf);
+			return rechercherNoeudASupprimer(noeudDroit, stagiaire, position);
+		}
+		
+		if (test==0) {
+			System.out.println("Nom trouvé");
+			if (noeud.getDoublon()==-1) {
+				supprimerRacine(noeud);				
+			}
+			else {
+				supprimerDoublon(noeud,stagiaire,positionPere);
+			}
+					
+		}
+					
+		return null;		
+	}
+private void supprimerDoublon(Noeud noeud, Stagiaire stagiaire, int positionPere) throws IOException {
+	
+	int position=(int)raf.getFilePointer()/FichierBinaire.TAILLE_NOEUD-1;
+	System.out.println("DoublonS");
+	if (noeud.getCle().getPrenom().equals(stagiaire.getPrenom())&&
+			noeud.getCle().getLibelleFormation().equals(stagiaire.getLibelleFormation())) {
+		System.out.println("Doublons à supprimer -> egal");
+		System.out.println(positionPere);
+		raf.seek(positionPere*FichierBinaire.TAILLE_NOEUD);
+		Noeud noeudPere=fichierBin.lectureFichierBin(raf);
+		if(noeudPere.getCle().getNom().equals(noeud.getCle().getNom())){
+			raf.seek(raf.getFilePointer()-12);
+			raf.writeInt(noeud.getDoublon());
+		}
+		else {
+			System.out.println("Doublon à supprimer -> ecriture");
+			raf.seek(noeud.getDoublon()*FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudRemplacant=fichierBin.lectureFichierBin(raf);
+			raf.seek(position*FichierBinaire.TAILLE_NOEUD);
+			raf.writeChars(noeudRemplacant.getCle().nomLongBin());
+			raf.writeChars(noeudRemplacant.getCle().prenomLongBin());
+			raf.writeChars(noeudRemplacant.getCle().departementLongBin());
+			raf.writeChars(noeudRemplacant.getCle().formationLongBin());
+			raf.writeInt(noeudRemplacant.getCle().getAnnee());
+			raf.writeInt(noeudRemplacant.getDoublon());						
+		}					
+	}else {
+		if(noeud.getDoublon() !=-1) {
+			System.out.println("recherche doublon suivant");
+			raf.seek(noeud.getDoublon()*FichierBinaire.TAILLE_NOEUD);
+			Noeud noeudDoublon=fichierBin.lectureFichierBin(raf);
+			supprimerDoublon(noeudDoublon, stagiaire, position);
+		}		
+	}		
+}
 }

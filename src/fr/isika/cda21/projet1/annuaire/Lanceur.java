@@ -1,7 +1,6 @@
 package fr.isika.cda21.projet1.annuaire;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
-import fr.isika.cda21.projet1.annuaire.modeles.Noeud;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import fr.isika.cda21.projet1.annuaire.vues.VuePrincipale;
 import javafx.application.Application;
@@ -23,15 +22,27 @@ public class Lanceur extends Application {
 			Stagiaire stagiaire4 = new Stagiaire("BOUCHET","Laurent","91","ATOD 19 CP",2013);
 			Stagiaire stagiaire5 = new Stagiaire("AUGEREAU","Kévin","76","AI78",2010);
 			Stagiaire stagiaire6 = new Stagiaire("POTIN","Thomas","75","ATOD 21",2014);
-		
-						
+			Stagiaire stagiaire7= new Stagiaire("ROIGNANT","Pierre-Yves","77","ATOD 27 CP",2015); 
+			Stagiaire stagiaire8 = new Stagiaire("ABHIAD", "Brahim", "92", "AI 60", 2003); 
+			Stagiaire stagiaire9 = new Stagiaire("ZABHIAD", "Brahim", "92", "AI 60", 2003); 
+			Stagiaire stagiaire10 = new Stagiaire("ROIGNANT","Pierre-Yves","77","ATOD 26 CP",2015);
+			//annuaire.supprimerStagiaire(stagiaire7,-1);
+			annuaire.ajouterStagiaire(stagiaire9);
+			//annuaire.supprimerStagiaire(stagiaire7);	
+			annuaire.visualiserAnnuaire();
+			
+			//System.out.println(annuaire.getPremierNoeud());
 			//annuaire.supprimerStagiaire(stagiaire2);
-						
+			//System.out.println(annuaire.getRaf().length());
 			// annuaire.rechercher(stagiaire);
-			//annuaire.afficherRechercheParNom("ROIGNANT");
+			//annuaire.afficherRechercheParNom("LACROIX");
 			annuaire.ordreAlpha();
+			for (Stagiaire stagiaireVue :annuaire.getListeDeStagiaires() ) {
+				System.out.println(stagiaireVue);
+			}
+			
 			System.out.println();
-			Scene scene = new VuePrincipale(annuaire);
+			Scene scene = new VuePrincipale(annuaire,primaryStage);
 			primaryStage.setTitle("Annuaire");
 			primaryStage.setX(50);
 			primaryStage.setY(100);

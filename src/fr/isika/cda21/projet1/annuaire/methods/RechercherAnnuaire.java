@@ -38,7 +38,7 @@ public class RechercherAnnuaire {
 	public ArrayList<Noeud> rechercheParNom(String nomARechercher) throws IOException {
 		nomARechercher = nomARechercher.toUpperCase();
 		Stagiaire stagiaire = new Stagiaire(nomARechercher);
-		System.out.println("Recherche par nom : " + nomARechercher);
+		System.out.println("Recherche par nom : " + nomARechercher);		
 		return rechercher(stagiaire);
 	}
 
@@ -57,7 +57,7 @@ public class RechercherAnnuaire {
 		return null;
 	}
 
-	private ArrayList<Noeud> rechercherRecursif(Noeud noeudCourant, Stagiaire stagiaireARechercher) throws IOException {
+	public ArrayList<Noeud> rechercherRecursif(Noeud noeudCourant, Stagiaire stagiaireARechercher) throws IOException {
 
 		ArrayList<Noeud> noeudsRecherches = new ArrayList<>();
 		if (noeudCourant == null) {
@@ -77,7 +77,6 @@ public class RechercherAnnuaire {
 				} while (noeudDoublon.getDoublon() != -1);
 			}
 			noeudsRecherches.add(noeudCourant);
-			System.out.println(noeudCourant);
 			return noeudsRecherches;
 		}
 
@@ -98,5 +97,7 @@ public class RechercherAnnuaire {
 
 		return null;
 	}
+	
+	
 
 }
