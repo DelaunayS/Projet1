@@ -45,7 +45,6 @@ public class RechercherAnnuaire {
 	// recherche par Stagiaire
 	public ArrayList<Noeud> rechercher(Stagiaire stagiaireARechercher) throws IOException {
 		raf.seek(0);
-
 		return rechercher(fichierBin.lectureFichierBin(raf), stagiaireARechercher);
 	}
 

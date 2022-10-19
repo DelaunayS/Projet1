@@ -1,6 +1,7 @@
 package fr.isika.cda21.projet1.annuaire;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
+import fr.isika.cda21.projet1.annuaire.modeles.Noeud;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import fr.isika.cda21.projet1.annuaire.vues.VuePrincipale;
 import javafx.application.Application;
@@ -22,15 +23,10 @@ public class Lanceur extends Application {
 			Stagiaire stagiaire4 = new Stagiaire("BOUCHET","Laurent","91","ATOD 19 CP",2013);
 			Stagiaire stagiaire5 = new Stagiaire("AUGEREAU","Kévin","76","AI78",2010);
 			Stagiaire stagiaire6 = new Stagiaire("POTIN","Thomas","75","ATOD 21",2014);
-			//annuaire.supprimer(stagiaire1);
-			//annuaire.parent(stagiaire3);
-			//annuaire.parent(stagiaire2);
-			//annuaire.parent(stagiaire1);			
-			//annuaire.parent(stagiaire);
-			annuaire.supprimerRacine(stagiaire2);
-			annuaire.visualiserAnnuaire();
-			
-			
+		
+						
+			//annuaire.supprimerStagiaire(stagiaire2);
+						
 			// annuaire.rechercher(stagiaire);
 			//annuaire.afficherRechercheParNom("ROIGNANT");
 			annuaire.ordreAlpha();
@@ -39,6 +35,7 @@ public class Lanceur extends Application {
 			primaryStage.setTitle("Annuaire");
 			primaryStage.setX(50);
 			primaryStage.setY(100);
+			primaryStage.setResizable(false);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (Exception e) {

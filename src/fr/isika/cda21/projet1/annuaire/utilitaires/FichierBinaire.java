@@ -45,15 +45,9 @@ public class FichierBinaire {
 	public void sauvegardeFichierBin(Noeud noeud, RandomAccessFile raf) {
 
 		/*
-		 * un stagiaire : => 172
-		 * nom 30 caractères => 30*2=60 
-		 * prenom 30 caractères => 30*2=60 
-		 * departement 3 caractères => 3*2 =6 
-		 * formation 15 caractères => 15*2=30
-		 * annee entier => 4
-		 * doublon =>4
-		 * indexNoeudGauche =>4
-		 * indexNoeudDroit =>4 
+		 * un stagiaire : => 172 nom 30 caractères => 30*2=60 prenom 30 caractères =>
+		 * 30*2=60 departement 3 caractères => 3*2 =6 formation 15 caractères => 15*2=30
+		 * annee entier => 4 doublon =>4 indexNoeudGauche =>4 indexNoeudDroit =>4
 		 * 
 		 */
 
@@ -74,8 +68,8 @@ public class FichierBinaire {
 
 	// lecture du fichier
 	public Noeud lectureFichierBin(RandomAccessFile raf) {
-		
-		try {		
+
+		try {
 
 			// variables nécessaire au stockage temporaire des données lues
 			Noeud noeud = new Noeud();
@@ -85,7 +79,7 @@ public class FichierBinaire {
 			String departement = "";
 			String formation = "";
 			int annee = 0;
-			int doublon=0;
+			int doublon = 0;
 			int filsGauche = 0;
 			int filsDroit = 0;
 
@@ -112,13 +106,13 @@ public class FichierBinaire {
 				formation += raf.readChar();
 			}
 			stagiaire.setLibelleFormation(formation.trim());
-			
+
 			// lecture de l'année
 			annee += raf.readInt();
 			stagiaire.setAnnee(annee);
-			
-			//lecture du doublon
-			doublon=raf.readInt();
+
+			// lecture du doublon
+			doublon = raf.readInt();
 			noeud.setDoublon(doublon);
 
 			// lecture fils gauche
@@ -137,11 +131,6 @@ public class FichierBinaire {
 			e.printStackTrace();
 		}
 		return null;
-
-	}
-
-	// récupérer Stagiaire
-	public void recupererStagiaire() {
 
 	}
 
