@@ -26,6 +26,14 @@ public class Stagiaire {
 	public Stagiaire(String nom) {
 		this.nom=nom;
 	}
+	
+	public Stagiaire(String nom, String prenom) {
+		this.nom=nom;
+		this.prenom=prenom;
+		this.departement="";
+		this.libelleFormation="";
+		this.annee=2022;		
+	}
 
 
 	public Stagiaire() {

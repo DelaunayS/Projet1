@@ -1,13 +1,22 @@
 package fr.isika.cda21.projet1.annuaire.vues;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.util.ArrayList;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -17,40 +26,32 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.util.StringConverter;
-
 
 
 public class VuePrincipale extends Scene {
 
-	/* ------------ ATTRIBUTS ------------ */
+	// ----------------------- ATTRIBUTS -----------------------//
 
 	private BorderPane root;
-	private GridPane panneauHaut;
-	private VBox conteneurLogin;
+	private BorderPane panneauHaut;
 	private VBox conteneurImage;
+	private VBox conteneurLogin;
 	private HBox ligneVisiteur;
 	private HBox ligneAdmin;
+	private HBox conteneurBarreDeRecherche;
 	private HBox panneauBas;
 	private Button ajouter;
 	private Button rechercher;
@@ -74,18 +75,17 @@ public class VuePrincipale extends Scene {
 	private VBox margeDroite;
 	private Annuaire annuaire;
 	private Stage primaryStage;
-	private Formulaire nouveauFormulaire;
-	
+	private FormulaireAjouter nouveauFormulaire;
+	private TextField barreDeRecherche;
+	private Label rechercheAvancee;
 
+	// ----------------------- CONSTRUCTEUR -----------------------//
 
-	/* ------------ CONSTRUCTEUR ------------ */
-
-	public VuePrincipale(Annuaire annuaire, Stage primaryStage) throws IOException {
+	public VuePrincipale(Annuaire annuaire, Stage primaryStage) throws IOException, DocumentException {
 		super(new BorderPane(), 650, 650);
 		root = ((BorderPane) this.getRoot());
-		panneauHaut = new GridPane();
+		panneauHaut = new BorderPane();
 		conteneurLogin = new VBox();
-		conteneurImage = new VBox();
 		ligneVisiteur = new HBox();
 		ligneAdmin = new HBox();
 		panneauBas = new HBox();
@@ -101,6 +101,7 @@ public class VuePrincipale extends Scene {
 		visiteur = new Button("Visiteur");
 		admin = new Button("Administrateur");
 		codeAdmin = new PasswordField();
+		codeAdmin.setPromptText("Mot de passe requis");
 		modeAdmin = new Label();
 		listeStagiaires = new TableView<Stagiaire>();
 		colonneNom = new TableColumn<Stagiaire, String>("Nom");
@@ -111,50 +112,70 @@ public class VuePrincipale extends Scene {
 		margeGauche = new VBox();
 		margeDroite = new VBox();
 		motDePasse = "CDA21";
-		
+		barreDeRecherche = new TextField();
+		conteneurBarreDeRecherche = new HBox();
+		conteneurImage = new VBox();
 
-		
-		
+		// ----------------------- INTEGRATION DES COMPOSANTES AUX CONTENEURS
+		// -----------------------//
 
-		/* ------------ INSERTION DES COMPOSANTES AUX CONTENEURS ------------ */
-
-		ligneVisiteur.getChildren().add(visiteur);
-		ligneAdmin.getChildren().addAll(admin, codeAdmin);
-		ligneAdmin.setSpacing(5);
-		conteneurLogin.getChildren().addAll(ligneVisiteur, ligneAdmin, modeAdmin);
-		conteneurLogin.setSpacing(5);
-		conteneurLogin.setMargin(ligneVisiteur, new Insets(20, 20, 0, 20));
-		conteneurLogin.setMargin(ligneAdmin, new Insets(8, 20, 0, 20));
-		conteneurLogin.setMargin(modeAdmin, new Insets(2, 20, 0, 20));
-		conteneurLogin.setAlignment(Pos.CENTER_LEFT);
-		root.getChildren().add(conteneurLogin);
-		panneauBas.getChildren().addAll(ajouter, rechercher, modifier, supprimer, impression, aide, quitter);
-		panneauBas.setMinSize(60, 60);
-		panneauBas.setAlignment(Pos.CENTER);
-		panneauBas.setSpacing(15);
-		panneauHaut.add(conteneurLogin, 0, 0);
-		panneauHaut.add(conteneurImage, 3, 0);
-		panneauHaut.setVgap(30);
-		panneauHaut.setHgap(40);
-		panneauHaut.setAlignment(Pos.CENTER);
+		/* intégration des conteneurs à la racine */
 		root.setBottom(panneauBas);
 		root.setCenter(listeStagiaires);
 		root.setLeft(margeGauche);
 		root.setRight(margeDroite);
 		root.setTop(panneauHaut);
-		root.setAlignment(panneauHaut, Pos.CENTER);
+		root.setAlignment(panneauHaut, Pos.TOP_CENTER);
 		margeGauche.setPadding(new Insets(10, 10, 10, 10));
 		margeDroite.setPadding(new Insets(10, 10, 10, 10));
-		
-		
-		
-		
-		
-		/* ------------ PARAMETRAGE DU TABLEVIEW ------------ */
+
+		// ajout du logo ISIKA
+		FileInputStream inputstream = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/logo.png");
+		Image logo = new Image(inputstream);
+		ImageView logoView = new ImageView(logo);
+		logoView.setFitHeight(200);
+		logoView.setFitWidth(270);
+
+		/*
+		 * les VBox du panneau haut du BorderPane conteneur de la partie login conteneur
+		 * du logo
+		 */
+		ligneVisiteur.getChildren().add(visiteur);
+		ligneAdmin.getChildren().addAll(admin, codeAdmin);
+		ligneAdmin.setSpacing(5);
+		conteneurLogin.getChildren().addAll(ligneVisiteur, ligneAdmin, modeAdmin);
+		conteneurLogin.setSpacing(5);
+		conteneurLogin.setPadding(new Insets(20, 20, 20, 20));
+		conteneurLogin.setAlignment(Pos.CENTER_LEFT);
+		conteneurImage.getChildren().add(logoView);
+
+		/* panneau bas du BorderPane */
+		panneauBas.getChildren().addAll(ajouter, rechercher, modifier, supprimer, impression, aide, quitter);
+		panneauBas.setMinSize(60, 60);
+		panneauBas.setAlignment(Pos.CENTER);
+		panneauBas.setSpacing(15);
+
+		/* panneau haut du BorderPane */
+		panneauHaut.setLeft(conteneurLogin);
+		panneauHaut.setAlignment(conteneurLogin, Pos.CENTER_LEFT);
+		panneauHaut.setRight(conteneurImage);
+		panneauHaut.setAlignment(conteneurImage, Pos.CENTER_RIGHT);
+		conteneurBarreDeRecherche.getChildren().addAll(barreDeRecherche);
+		panneauHaut.setBottom(conteneurBarreDeRecherche);
+		panneauHaut.setAlignment(conteneurBarreDeRecherche, Pos.BOTTOM_CENTER);
+
+		/*
+		 * conteneur HBox de la barre de recherche intégration de la barre de recherche
+		 * dans le conteneur
+		 */
+		conteneurBarreDeRecherche.setAlignment(Pos.BOTTOM_CENTER);
+		conteneurBarreDeRecherche.setMaxWidth(610);
+		conteneurBarreDeRecherche.setHgrow(barreDeRecherche, Priority.ALWAYS);
+
+		// ----------------------- PARAMETRAGE DE LA TABLEVIEW -----------------------//
 
 		// on remplit les colonnes du tableau par les paramètres de la classe Stagiaire
 		colonneNom.setCellValueFactory(new PropertyValueFactory<Stagiaire, String>("nom"));
-
 		colonnePrenom.setCellValueFactory(new PropertyValueFactory<Stagiaire, String>("prenom"));
 		colonneDepartement.setCellValueFactory(new PropertyValueFactory<Stagiaire, String>("departement"));
 		colonneFormation.setCellValueFactory(new PropertyValueFactory<Stagiaire, String>("libelleFormation"));
@@ -164,8 +185,6 @@ public class VuePrincipale extends Scene {
 		listeStagiaires.getColumns().addAll(colonneNom, colonnePrenom, colonneDepartement, colonneFormation,
 				colonneAnnee);
 
-		
-		
 		// on définit la largeur des colonnes
 		colonneNom.prefWidthProperty().bind(listeStagiaires.widthProperty().multiply(0.25));
 		colonnePrenom.prefWidthProperty().bind(listeStagiaires.widthProperty().multiply(0.25));
@@ -173,168 +192,206 @@ public class VuePrincipale extends Scene {
 		colonneFormation.prefWidthProperty().bind(listeStagiaires.widthProperty().multiply(0.2));
 		colonneAnnee.prefWidthProperty().bind(listeStagiaires.widthProperty().multiply(0.15));
 
-		// création d'une liste observable pour remplir le tableau
+		/*
+		 * On met l'annuaire dans l'ordre alphabétique et on crée une liste observable à
+		 * laquelle on donne l'annuaire (sous forme de liste)
+		 */
+		annuaire.ordreAlpha();
+		ObservableList<Stagiaire> listeObservableStagiaires = FXCollections
+				.observableArrayList(annuaire.getListeDeStagiaires());
 
-		// ajout du logo ISIKA
-		FileInputStream inputstream = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/logo.png");
-		Image logo = new Image(inputstream);
-		ImageView logoView = new ImageView(logo);
-		logoView.setX(50);
-		logoView.setY(25);
-		logoView.setFitHeight(150);
-		logoView.setFitWidth(200);
+		/* On implémente la tableView avec la liste observable des stagiaires */
+		listeStagiaires.getItems().addAll(listeObservableStagiaires);
 
-		conteneurImage.getChildren().add(logoView);
+		// ----------------------- BOUTONS -----------------------//
 
-		/* ------------ BOUTONS ------------ */
-
-		/* ------------ CONNEXION EN MODE ADMINISTRATEUR ------------ */
-
+		/* connexion en mode administrateur */
 		admin.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
+
+				/* si le mot de passe est correct */
+
 				if (codeAdmin.getText().equals(motDePasse)) {
 					codeAdmin.setText(null);
+
+					/* les boutons modifier et supprimer s'affichent */
+
 					modifier.setVisible(true);
 					supprimer.setVisible(true);
 					modeAdmin.setText("Vous êtes en mode administrateur");
 					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
 					modeAdmin.setTextFill(Color.GREEN);
 
-					colonneAnnee.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Integer>() {
+				} else { /* sinon message d'erreur et les boutons restent cachés */
 
-						@Override
-						public Integer fromString(String string) {
-							int annee = 0;
-							return annee;
-						}
-
-						@Override
-						public String toString(Integer annee) {
-							return annee.toString();
-						}
-					}));
-					colonneAnnee.setOnEditStart(new EventHandler<TableColumn.CellEditEvent<Stagiaire, Integer>>() {
-
-						public void handle(CellEditEvent<Stagiaire, Integer> event) {
-							((Stagiaire) event.getTableView().getItems().get(event.getTablePosition().getRow()))
-									.setAnnee(event.getNewValue());
-						}
-					});
-
-					colonneFormation.setCellFactory(TextFieldTableCell.forTableColumn());
-					colonneFormation.setOnEditStart(new EventHandler<TableColumn.CellEditEvent<Stagiaire, String>>() {
-
-						public void handle(CellEditEvent<Stagiaire, String> event) {
-							((Stagiaire) event.getTableView().getItems().get(event.getTablePosition().getRow()))
-									.setLibelleFormation(event.getNewValue());
-						}
-					});
-
-					colonneDepartement.setCellFactory(TextFieldTableCell.forTableColumn());
-					colonneDepartement.setOnEditStart(new EventHandler<TableColumn.CellEditEvent<Stagiaire, String>>() {
-
-						public void handle(CellEditEvent<Stagiaire, String> event) {
-							((Stagiaire) event.getTableView().getItems().get(event.getTablePosition().getRow()))
-									.setDepartement(event.getNewValue());
-						}
-					});
-
-					colonnePrenom.setCellFactory(TextFieldTableCell.forTableColumn());
-					colonnePrenom.setOnEditStart(new EventHandler<TableColumn.CellEditEvent<Stagiaire, String>>() {
-
-						public void handle(CellEditEvent<Stagiaire, String> event) {
-							((Stagiaire) event.getTableView().getItems().get(event.getTablePosition().getRow()))
-									.setPrenom(event.getNewValue());
-						}
-					});
-
-					colonneNom.setCellFactory(TextFieldTableCell.forTableColumn());
-					colonneNom.setOnEditStart(new EventHandler<TableColumn.CellEditEvent<Stagiaire, String>>() {
-
-						@Override
-						public void handle(CellEditEvent<Stagiaire, String> event) {
-							((Stagiaire) event.getTableView().getItems().get(event.getTablePosition().getRow()))
-									.setNom(event.getNewValue());
-
-						}
-					});
-
+					modeAdmin.setText("Mot de passe erroné. Veuillez réessayer.");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.RED);
 				}
 			}
 		});
 
-				
-		annuaire.ordreAlpha();
-		ObservableList<Stagiaire> listeObservableStagiaires =
-				FXCollections.observableArrayList(annuaire.getListeDeStagiaires());
-		listeStagiaires.getItems().addAll(listeObservableStagiaires);
-		
-		nouveauFormulaire = new Formulaire(annuaire, listeStagiaires, listeObservableStagiaires);
-		
-		ajouter.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent arg0) {
-				
-				nouveauFormulaire.getNouvelleFenetre();
-				nouveauFormulaire.getNouvelleFenetre().setScene(nouveauFormulaire);
-				nouveauFormulaire.getNouvelleFenetre().show();
-		
-			}
-
-		});
-
-		
-		
-		/* ------------ DECONNEXION ------------ */
-
+		/*
+		 * retour au mode visiteur permet de se déconnecter du mode administrateur
+		 */
 		visiteur.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
+				/* les boutons modifier et supprimer deviennent à nouveau invisibles */
 				modifier.setVisible(false);
 				supprimer.setVisible(false);
 				modeAdmin.setText(null);
+				;
 			}
 		});
-		
-		
-		supprimer.setOnAction(new EventHandler<ActionEvent>() {
 
+		/* ajout d'un nouveau stagiaire */
+		ajouter.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				
-				Supprimer fenetreSupprimer = new Supprimer(annuaire, listeStagiaires, listeObservableStagiaires);
-				fenetreSupprimer.getNouvelleFenetre().setScene(fenetreSupprimer);
-				fenetreSupprimer.getNouvelleFenetre().show();
+				/* créatioon d'une nouvelle scène avec le formulaire */
+				nouveauFormulaire = new FormulaireAjouter(annuaire, listeStagiaires, listeObservableStagiaires);
+				/* ouverture d'une nouvelle fenêtre */
+				nouveauFormulaire.getNouvelleFenetre().setScene(nouveauFormulaire);
+				/* affichage de la fenêtre */
+				nouveauFormulaire.getNouvelleFenetre().show();
 			}
 		});
 
-		
-		quitter.setOnAction(new EventHandler<ActionEvent>() {
-
-			public void handle(ActionEvent event) {
-			((Stage)((Button)event.getSource()).getScene().getWindow()).close(); 
-				
-			}
-		});
-				
-		
-		
+		/* modifier un stagiaire */
 		modifier.setOnAction(new EventHandler<ActionEvent>() {
-
-			
 			public void handle(ActionEvent arg0) {
-				Scene modifier = new Modifier(annuaire, listeStagiaires, listeObservableStagiaires);				
-				((Modifier) modifier).getFenetreModifier().setScene(modifier);
-				((Modifier) modifier).getFenetreModifier().show();
-				
+				if (!(listeStagiaires.getSelectionModel().isEmpty())) {
+					modeAdmin.setText("");
+					/* création d'une nouvelle scène avec le formulaire */
+					Scene modifier = new Modifier(annuaire, listeStagiaires, listeObservableStagiaires);
+					/* création d'une nouvelle fenêtre */
+					((Modifier) modifier).getFenetreModifier().setScene(modifier);
+					((Modifier) modifier).getFenetreModifier().show();
+				} 
+					modeAdmin.setText("Veuillez sélectionner la ligne à modifier.");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.RED);
 			}
-			
+		});
+
+		/* suppression d'un stagiaire */
+		supprimer.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				if (!(listeStagiaires.getSelectionModel().isEmpty())) {
+					modeAdmin.setText("");
+					/* créatioon d'une nouvelle scène avec le formulaire */
+					Scene supprimer = new Supprimer(annuaire, listeStagiaires, listeObservableStagiaires);
+					/* création d'une nouvelle fenêtre */
+					Stage stage = new Stage();
+					stage.setTitle("Supprimer un stagiaire");
+					/* ouverture d'une nouvelle fenêtre */
+					stage.setScene(supprimer);
+					/* affichage de la fenêtre */
+					stage.show();
+				} 
+					modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.RED);
+			}
+		});
+
+		/*clic sur le bouton aide*/
+		aide.setOnAction(eventAction -> {
+			Scene scene;
+			try {
+				scene = new AideVue(annuaire,primaryStage);
+				Stage stage = (Stage) VuePrincipale.this.getRoot().getScene().getWindow();
+				stage.setScene(scene);
+				stage.show();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		});
 		
 		
+		/* fermer l'application */
+		quitter.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				/* fermeture de la fenêtre */
+				((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
+			}
+		});
 		
 		
+		/* imprimer la liste */
+		
+		impression.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				Document fichier = new Document();						
+		
+				ArrayList<Stagiaire> listeAimprimer = new ArrayList<>();
+				listeAimprimer.addAll(listeStagiaires.getItems());	
+				
+				try {
+					PdfWriter.getInstance(fichier, new FileOutputStream("./src/fr/isika/cda21/projet1/annuaire/utilitaires/Liste_Stagiaires.pdf"));
+					fichier.open();
+					fichier.add(new Paragraph("LISTE DES STAGIAIRES"));
+					
+					for (Stagiaire stagiaireAimprimer : listeAimprimer) {
+					String paragrapheAimprimer = stagiaireAimprimer.getNom() +
+							" " + stagiaireAimprimer.getPrenom() +
+							" - Departement : " + stagiaireAimprimer.getDepartement() + 
+							" - Formation : " + stagiaireAimprimer.getLibelleFormation() + 
+							" - Année de formation : " + String.valueOf(stagiaireAimprimer.getAnnee()); 
+					fichier.add(new Paragraph(paragrapheAimprimer));
+					}
+										
+					fichier.close();
+		
+				} catch (FileNotFoundException | DocumentException e) {
+					e.printStackTrace();
+				}
+						
+			}
+
+		});
+		
+		// ----------------------- RECHERCHE MULTICRITERE -----------------------//
+
+		/* on englobe la liste observable dans une liste filtrée */
+
+		FilteredList<Stagiaire> donneeFiltree = new FilteredList<>(listeObservableStagiaires, b -> true);
+
+		barreDeRecherche.textProperty().addListener((observable, oldValue, newValue) -> {
+			donneeFiltree.setPredicate(stagiaire -> {
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
+				String lowerCaseFilter = newValue.toLowerCase();
+
+				if (stagiaire.getNom().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+					return true;
+				} else if (stagiaire.getPrenom().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+					return true;
+				} else if (stagiaire.getDepartement().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+					return true;
+				} else if (stagiaire.getLibelleFormation().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+					return true;
+				} else if (String.valueOf(stagiaire.getAnnee()).indexOf(lowerCaseFilter) != -1) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+
+		});
+
+		barreDeRecherche.setPromptText("Recherche avancée ");
+
+		SortedList<Stagiaire> donneeTriee = new SortedList<>(donneeFiltree);
+		donneeTriee.comparatorProperty().bind(listeStagiaires.comparatorProperty());
+		listeStagiaires.setItems(donneeTriee);
+
 	}
 
-	/* ------------ GETTERS && SETTERS ------------ */
+	// ----------------------- GETTERS ET SETTERS -----------------------//
+
 	public Button getAjouter() {
 		return ajouter;
 	}
@@ -478,6 +535,4 @@ public class VuePrincipale extends Scene {
 	public void setPrimaryStage(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 	}
-
-	
 }

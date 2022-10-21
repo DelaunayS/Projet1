@@ -11,6 +11,7 @@ import fr.isika.cda21.projet1.annuaire.methods.SupprimerAnnuaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.Fichier;
 import fr.isika.cda21.projet1.annuaire.utilitaires.FichierBinaire;
 
+//auteurs : groupe2
 public class Annuaire {
 
 	// attributs
@@ -19,7 +20,7 @@ public class Annuaire {
 	private FichierBinaire fichierBin;
 	private int indexCompteur;
 	private RandomAccessFile raf;
-	private AjouterAnnuaire ajouterAnnuaire;	
+	private AjouterAnnuaire ajouterAnnuaire;
 	private RechercherAnnuaire rechercherAnnuaire;
 	private ParcourirAnnuaire parcourirAnnuaire;
 	private SupprimerAnnuaire supprimerAnnuaire;
@@ -36,14 +37,12 @@ public class Annuaire {
 
 		try {
 			raf = new RandomAccessFile(FichierBinaire.cheminFichierBin, "rw");
-			
+
 			this.rechercherAnnuaire = new RechercherAnnuaire(fichierBin, raf);
 			this.ajouterAnnuaire = new AjouterAnnuaire(fichierBin, raf, premierNoeud);
 			if (raf.length() == 0) {
 				remplirAnnuaire();
 			}
-			;
-
 			this.parcourirAnnuaire = new ParcourirAnnuaire(fichierBin, raf, listeDeStagiaires);
 			this.supprimerAnnuaire = new SupprimerAnnuaire(fichierBin, raf, rechercherAnnuaire);
 
@@ -101,8 +100,6 @@ public class Annuaire {
 	public void setAjouterAnnuaire(AjouterAnnuaire ajouterAnnuaire) {
 		this.ajouterAnnuaire = ajouterAnnuaire;
 	}
-	
-
 
 	public RechercherAnnuaire getRechercherAnnuaire() {
 		return rechercherAnnuaire;
@@ -151,14 +148,18 @@ public class Annuaire {
 		rechercherAnnuaire.rechercheParNom(nom);
 	}
 
-	// affichage de l'annuaire dans l'ordre alphabétique
+	/* L'annuaire est mis dans l'ordre alphabétique
+	 * on se positionne au début du fichier et on vide la liste des stagiaires
+	 * on fait un parcours infixe pour remplir la liste des stagiaires
+	 */
 	public void ordreAlpha() throws IOException {
 		raf.seek(0);
 		setListeDeStagiaires(new ArrayList<Stagiaire>());
+		System.out.println();
 		parcourirAnnuaire.parcoursGND(fichierBin.lectureFichierBin(raf), listeDeStagiaires);
 	}
 
-	// supprimer un stagiaire
+	// supprimer un stagiaire de l'annuaire
 	public void supprimerStagiaire(Stagiaire stagiaire) throws IOException {
 		supprimerAnnuaire.supprimerRacine(stagiaire);
 	}
@@ -168,7 +169,7 @@ public class Annuaire {
 		raf.seek(0);
 		int nombreNoeud = (int) raf.length() / FichierBinaire.TAILLE_NOEUD;
 		for (int i = 0; i < nombreNoeud; i++) {
-			System.out.println("n° "+i+" : "+fichierBin.lectureFichierBin(raf));
+			System.out.println("n° " + i + " : " + fichierBin.lectureFichierBin(raf));
 		}
 		System.out.println("Taille : " + raf.length());
 	}

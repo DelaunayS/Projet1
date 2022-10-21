@@ -4,29 +4,23 @@ import java.io.IOException;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
-import fr.isika.cda21.projet1.annuaire.utilitaires.FichierBinaire;
-import javafx.collections.FXCollections;
+import fr.isika.cda21.projet1.annuaire.utilitaires.Couleur;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -58,13 +52,7 @@ public class Modifier extends Scene {
 	private Label etiquetteAnnee;
 	private ComboBox<String> choixAnnee;
 	private Button boutonValider;
-	private Label etiquetteMessageErreur;
-	private static final String COULEUR_BG_LIGHT = "#f8f9fa";
-	private static final String COULEUR_BG_PRIMARY = "#007bff";
-	private static final String COULEUR_BG_DANGER = "#dc3545";
-	private static final String COULEUR_BG_WHITE = "#ffffff";
-	private static final String COULEUR_BG_INFO = "#17a2b8";
-	private static final String BG_SECONDARY = "#6c757d";
+	private Label etiquetteMessageErreur;	
 	private String nom;
 	private String prenom;
 	private Tooltip infoBulleNom;
@@ -79,8 +67,9 @@ public class Modifier extends Scene {
 
 	public Modifier(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
 			ObservableList<Stagiaire> listeObservableStagiaires) {
-		super(new GridPane(), 550, 300);
+		super(new GridPane(), 580, 350);
 		fenetreModifier = new Stage();
+		fenetreModifier.setTitle("Modifier un stagiaire");
 		panneauRacine = ((GridPane) this.getRoot());
 		panneauRacine.setStyle("-fx-background-color : floralwhite");
 		etiquetteNom = new Label("NOM : ");
@@ -116,7 +105,7 @@ public class Modifier extends Scene {
 
 		infoBulleNom = new Tooltip(
 				"Nom ne comportant aucun caractère spécial, ni chiffre,\n ni accent/cédille et ayant au moins 2 lettres");
-		infoBulleNom.setStyle("-fx-background-color : " + BG_SECONDARY);
+		infoBulleNom.setStyle("-fx-background-color : " + Couleur.SECONDARY);
 		infoBulleNom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
 		champTexteNom.setTooltip(infoBulleNom);
 		infoBulleNom.setTextAlignment(TextAlignment.CENTER);
@@ -125,7 +114,7 @@ public class Modifier extends Scene {
 
 		infoBullePrenom = new Tooltip(
 				"Prénom ne comportant aucun caractère spécial, \n ni chiffre et ayant au moins 2 lettres");
-		infoBullePrenom.setStyle("-fx-background-color : " + BG_SECONDARY);
+		infoBullePrenom.setStyle("-fx-background-color : " + Couleur.SECONDARY);
 		infoBullePrenom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
 		champTextePrenom.setTooltip(infoBullePrenom);
 		infoBullePrenom.setTextAlignment(TextAlignment.CENTER);
@@ -175,7 +164,7 @@ public class Modifier extends Scene {
 		// Création étiquette pour affichage message d'erreur au dessus du bouton
 		// Valider
 		etiquetteMessageErreur = new Label();
-		etiquetteMessageErreur.setTextFill(Color.web(COULEUR_BG_DANGER));
+		etiquetteMessageErreur.setTextFill(Color.web(Couleur.DANGER));
 		etiquetteMessageErreur.setFont(Font.font("Regular", FontWeight.BOLD, 12));
 
 		// Création bouton Valider avec fixation de sa largeur (250/3)
@@ -184,9 +173,9 @@ public class Modifier extends Scene {
 
 		// Remplissage bouton Valider avec couleur texte et fond
 
-		boutonValider.setTextFill(Color.web(COULEUR_BG_WHITE));
+		boutonValider.setTextFill(Color.web(Couleur.LIGHT));
 		boutonValider.setFont(Font.font("Regular", FontWeight.BOLD, 13));
-		boutonValider.setStyle("-fx-background-color : " + COULEUR_BG_INFO);
+		boutonValider.setStyle("-fx-background-color : " + Couleur.PRIMARY);
 
 		// Ajouts des étiquettes et boutons en tant que noeuds enfants du panneauRacine
 		panneauRacine.addRow(0, etiquetteNom, champTexteNom);
@@ -206,114 +195,88 @@ public class Modifier extends Scene {
 		/*----------------- JE RECUPERE LES INFOS DE LA LIGNE SUR LAQUELLE JE SUIS POSITIONNEE ----------------- */
 
 		
+		/* on crée un nouveau stagiaire sélectionné */ 
 		Stagiaire stagiaireselectionne = listeStagiaires.getSelectionModel().getSelectedItem();
+		
+		/* on lui attribue tous les champs de la ligne sur laquelle on se trouve */
+			
 		String selectedFormation = stagiaireselectionne.getLibelleFormation();
 		String[] attributsFormation = selectedFormation.split(" ");
-		
 		champTexteNom.setText(stagiaireselectionne.getNom());
 		champTextePrenom.setText(stagiaireselectionne.getPrenom());
 		choixDepartement.setValue(stagiaireselectionne.getDepartement());
 		choixCursus.setValue(attributsFormation[0]);
-		choixNumero.setValue(attributsFormation[1]);
-		choixContrat.setIndeterminate(choixContrat.isSelected());
+		choixNumero.setValue(attributsFormation[1]);		
+		if (attributsFormation[2].equals("CP")) {			
+			choixContrat.setSelected(true);			
+		}
+		
+		//choixContrat.setIndeterminate(true);
 		choixAnnee.setValue(String.valueOf(stagiaireselectionne.getAnnee()));
 
-//		for (String attribut : attributsFormation) {
-//        System.out.println(attribut);
-//        
-//		}
-//		
-//		for (int i = 0 ; i == attributsFormation.length ; i++) {
-//			
-//			c.setValue(attributsFormation[2]);
-//		}
-//		
+		System.out.println("stagiaire sélectionné" + stagiaireselectionne);
 
+		
+		/*---------------- PARAMETRAGE DU BOUTON VALIDER ----------------- */
+		
 		boutonValider.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-
-				if ((!(nom.matches("[A-Z, ,--]+"))) || (nom.length() < 2)) {
-					System.out.println(
-							"Veuillez entrer un nom valide sans caractère spécial, \n ni chiffre, ni accent/cédille et ayant au moins 2 lettres");
-				}
-
-				if ((!(prenom.matches("[a-zA-Z, ,--,à,â,ä,é,è,ê,ë,î,ï,ô,ö,ù,û,ü,ÿ,ç]+"))) || (prenom.length() < 2)) {
-					System.out.println(
-							" Veuillez entrer un prénom valide sans caractère spécial, \n ni chiffre et ayant au moins 2 lettres");
-				}
-
-//				stagiaireselectionne.setNom(champTexteNom.getText());
-//				stagiaireselectionne.setPrenom(champTextePrenom.getText());
-//				stagiaireselectionne.setDepartement(choixDepartement.getSelectionModel().getSelectedItem());
-//				stagiaireselectionne.setLibelleFormation(
-//						(choixCursus.getSelectionModel().getSelectedItem()) + " " +
-//						 choixNumero.getSelectionModel().getSelectedItem()+ " " +
-//						 contrat);
-//				stagiaireselectionne.setAnnee((Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem())));
-//						
-//			
 				
-	/*----------------- MODIFICATION DU FICHIER BINAIRE ----------------- */
-				
-				
-	// je crée un nouveau stagiaire avec les données modifiées 
-				
+				Stagiaire stagiaireModifie = new Stagiaire
+						(champTexteNom.getText(), 
+						champTextePrenom.getText(),
+						choixDepartement.getSelectionModel().getSelectedItem(),
+						(choixCursus.getSelectionModel().getSelectedItem() + " "
+						+ choixNumero.getSelectionModel().getSelectedItem() + " "),
+						(Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem())));			
+		
 				try {
-					annuaire.ordreAlpha();
-					annuaire.getAjouterAnnuaire().ajouterStagiaire(ajoutStagiaireModifie());
-					annuaire.getSupprimerAnnuaire().supprimerRacine(stagiaireselectionne, -1);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
+			
+			/* j'ajoute un nouveau stagiaire dans l'annuaire avec les informations du stagiaire sélectionné
+			* je fais appel à la méthode ajoutStagiaireModifie qui reprend les cases 
+			* mises à jour du stagiaire sélectionné
+			*/
 	
-	// je crée une nouvelle liste observable et j'ajoute le stagiaire à la liste
+			annuaire.getAjouterAnnuaire().ajouterStagiaire(stagiaireModifie);
+			
+			/* je supprime le stagiaire sélectionné */
+
+			annuaire.supprimerStagiaire(stagiaireselectionne);
+
+			/* je mets la liste dans l'ordre, cela me crée une nouvelle liste (ArrayList) */
+
+			annuaire.ordreAlpha();
+						
+			
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 				
-				ObservableList<Stagiaire> listeMAJstagiaires = FXCollections
-						.observableArrayList(annuaire.getListeDeStagiaires());
-
-				listeStagiaires.getItems().removeAll(listeObservableStagiaires);
-				listeStagiaires.getItems().clear();
-				listeStagiaires.getItems().addAll(listeMAJstagiaires);
-
-
-	// je supprime le stagiaire modifié
-
+		
+			/* j'enlève l'ancienne liste observable */
 				
+			listeObservableStagiaires.clear();
+			listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
 				
-				/*----------------- FERMETURE DE LA FENETRE ----------------- */
+		/* fermeture de la fenêtre */
+		Window window = boutonValider.getScene().getWindow();
+		Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
+		nouvelleFenetre.close();
 
-				Window window = boutonValider.getScene().getWindow();
-				Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
-				nouvelleFenetre.close();
+		
+		// effacement de tous les champs
+		champTexteNom.clear();
+		champTextePrenom.clear();
+		choixDepartement.getSelectionModel().clearSelection();
+		choixCursus.getSelectionModel().clearSelection();
+		choixNumero.getSelectionModel().clearSelection();
 
-				// effacement de tous les champs
-				champTexteNom.clear();
-				champTextePrenom.clear();
-				choixDepartement.getSelectionModel().clearSelection();
-				choixCursus.getSelectionModel().clearSelection();
-				choixNumero.getSelectionModel().clearSelection();
-
-			}
-
-		});
 	}
 
-	public Stagiaire ajoutStagiaireModifie() {
-		String contrat = "";
-
-		if (choixContrat.isSelected() == true) {
-			contrat = "CP";
+});
 		}
 
-		Stagiaire stagiaireModifie = new Stagiaire(champTexteNom.getText(), champTextePrenom.getText(),
-				choixDepartement.getSelectionModel().getSelectedItem(),
-				(choixCursus.getSelectionModel().getSelectedItem() + " "
-						+ choixNumero.getSelectionModel().getSelectedItem() + " " + contrat),
-				(Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem())));
-
-		return stagiaireModifie;
-	}
 
 	public GridPane getPanneauRacine() {
 		return panneauRacine;

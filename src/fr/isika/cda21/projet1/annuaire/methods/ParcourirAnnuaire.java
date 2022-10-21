@@ -10,21 +10,24 @@ import fr.isika.cda21.projet1.annuaire.utilitaires.FichierBinaire;
 
 public class ParcourirAnnuaire {
 
+	//attributs
 	private FichierBinaire fichierBin;
 	private RandomAccessFile raf;
 	private ArrayList<Stagiaire> listeDeStagiaires;
 
+	//constructeurs
 	public ParcourirAnnuaire(FichierBinaire fichierBin, RandomAccessFile raf, ArrayList<Stagiaire> listeDeStagiaires) {
 		this.fichierBin = fichierBin;
 		this.raf = raf;
 		this.listeDeStagiaires = listeDeStagiaires;
 	}
 
+	//getter
 	public ArrayList<Stagiaire> getListeDeStagiaires() {
 		return listeDeStagiaires;
 	}
 
-	// pour faire un parcours infixe
+	// Méthode pour faire un parcours infixe
 	public void parcoursGND(Noeud noeudCourant, ArrayList<Stagiaire> listeDeStagiaires) throws IOException {
 
 		// on positionne le pointeur pour pouvoir lire l'index gauche puis le droit
@@ -46,8 +49,11 @@ public class ParcourirAnnuaire {
 			lireDoublons(noeudDoublon,listeDeStagiaires);
 		}
 		
+		//on ajoute le noeud à la liste des stagiaires
 		listeDeStagiaires.add(noeudCourant.getCle());
+		System.out.println(noeudCourant);
 
+		// on vérifie s'il existe un noeud à droite
 		if (noeudCourant.getFilsDroit() != -1) {
 			raf.seek(noeudCourant.getFilsDroit() * FichierBinaire.TAILLE_NOEUD);
 			Noeud noeudDroit = fichierBin.lectureFichierBin(raf);
@@ -55,6 +61,10 @@ public class ParcourirAnnuaire {
 		}
 	}
 
+	/* Méthode récursive pour lire la liste chainée de doublons
+	 * et les ajouter à la liste des stagiaires
+	 * quand il n'y a plus de doublon à la liste chainée de doublons
+	 */
 	private void lireDoublons(Noeud noeudDoublon, ArrayList<Stagiaire> listeDeStagiaires2) throws IOException {
 		if (noeudDoublon.getDoublon()!=-1) {
 			Noeud doublonSuivant = new Noeud();
