@@ -192,30 +192,58 @@ public class Modifier extends Scene {
 		panneauRacine.setHgap(30);
 
 
-		/*----------------- JE RECUPERE LES INFOS DE LA LIGNE SUR LAQUELLE JE SUIS POSITIONNEE ----------------- */
+/*----------------- JE RECUPERE LES INFOS DE LA LIGNE SUR LAQUELLE JE SUIS POSITIONNEE ----------------- */
 
 		
 		/* on crée un nouveau stagiaire sélectionné */ 
-		Stagiaire stagiaireselectionne = listeStagiaires.getSelectionModel().getSelectedItem();
 		
 		/* on lui attribue tous les champs de la ligne sur laquelle on se trouve */
-			
-		String selectedFormation = stagiaireselectionne.getLibelleFormation();
+		
+		Stagiaire stagiaireselectionne = new Stagiaire();
+		String selectedFormation = listeStagiaires.getSelectionModel().getSelectedItem().getLibelleFormation();
 		String[] attributsFormation = selectedFormation.split(" ");
+		
+		stagiaireselectionne.setNom(listeStagiaires.getSelectionModel().getSelectedItem().getNom());
 		champTexteNom.setText(stagiaireselectionne.getNom());
+
+		stagiaireselectionne.setPrenom(listeStagiaires.getSelectionModel().getSelectedItem().getPrenom());
 		champTextePrenom.setText(stagiaireselectionne.getPrenom());
-		choixDepartement.setValue(stagiaireselectionne.getDepartement());
-		choixCursus.setValue(attributsFormation[0]);
-		choixNumero.setValue(attributsFormation[1]);		
-		if (attributsFormation[2].equals("CP")) {			
-			choixContrat.setSelected(true);			
+
+		
+		if (listeStagiaires.getSelectionModel().getSelectedItem().getDepartement().equals(null)) {
+			stagiaireselectionne.setDepartement("");
+		}else {
+			stagiaireselectionne.setDepartement(listeStagiaires.getSelectionModel().getSelectedItem().getDepartement());
+			choixDepartement.setValue(stagiaireselectionne.getDepartement());
 		}
 		
-		//choixContrat.setIndeterminate(true);
+		String nomFormation = "";
+		String promo = "";
+		String contrat = "";
+		
+		if(listeStagiaires.getSelectionModel().getSelectedItem().getLibelleFormation().equals(null)){
+			stagiaireselectionne.setLibelleFormation("");
+		} else {
+			if (attributsFormation[0] != null) {
+		nomFormation = attributsFormation[0];
+		choixCursus.setValue(nomFormation);
+			}
+			if (attributsFormation[1] != null) {
+				promo = attributsFormation[1];
+				choixNumero.setValue(promo);
+			}
+			if (attributsFormation[2] != null) {
+				if (attributsFormation[2].equals("CP")) {
+					choixContrat.setSelected(true);
+				}
+		}
+			stagiaireselectionne.setLibelleFormation(nomFormation + " " + promo + " " + contrat);
+
+		}
+			
+		stagiaireselectionne.setAnnee(listeStagiaires.getSelectionModel().getSelectedItem().getAnnee());
 		choixAnnee.setValue(String.valueOf(stagiaireselectionne.getAnnee()));
-
-		System.out.println("stagiaire sélectionné" + stagiaireselectionne);
-
+				
 		
 		/*---------------- PARAMETRAGE DU BOUTON VALIDER ----------------- */
 		

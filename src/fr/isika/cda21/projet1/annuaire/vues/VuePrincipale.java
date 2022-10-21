@@ -13,6 +13,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -39,6 +40,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 public class VuePrincipale extends Scene {
@@ -76,6 +78,7 @@ public class VuePrincipale extends Scene {
 	private Annuaire annuaire;
 	private Stage primaryStage;
 	private FormulaireAjouter nouveauFormulaire;
+	private FormulaireRechercher nouvelleRecherche;
 	private TextField barreDeRecherche;
 	private Label rechercheAvancee;
 
@@ -255,6 +258,18 @@ public class VuePrincipale extends Scene {
 				nouveauFormulaire.getNouvelleFenetre().show();
 			}
 		});
+		
+		/* rechercher un stagiaire */
+		rechercher.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				/* création d'une nouvelle scène avec le formulaire */
+				nouvelleRecherche = new FormulaireRechercher(annuaire, listeStagiaires, listeObservableStagiaires);
+				/* ouverture d'une nouvelle fenêtre */
+				nouvelleRecherche.getFenetreRechercher().setScene(nouvelleRecherche);
+				/* affichage de la fenêtre */
+				nouvelleRecherche.getFenetreRechercher().show();
+			}
+		});
 
 		/* modifier un stagiaire */
 		modifier.setOnAction(new EventHandler<ActionEvent>() {
@@ -319,15 +334,14 @@ public class VuePrincipale extends Scene {
 		});
 		
 		
-		/* imprimer la liste */
+/* imprimer la liste */
 		
 		impression.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Document fichier = new Document();						
-		
+				Document fichier = new Document();
 				ArrayList<Stagiaire> listeAimprimer = new ArrayList<>();
-				listeAimprimer.addAll(listeStagiaires.getItems());	
-				
+				listeAimprimer.addAll(listeStagiaires.getItems());
+	
 				try {
 					PdfWriter.getInstance(fichier, new FileOutputStream("./src/fr/isika/cda21/projet1/annuaire/utilitaires/Liste_Stagiaires.pdf"));
 					fichier.open();
@@ -340,16 +354,26 @@ public class VuePrincipale extends Scene {
 							" - Formation : " + stagiaireAimprimer.getLibelleFormation() + 
 							" - Année de formation : " + String.valueOf(stagiaireAimprimer.getAnnee()); 
 					fichier.add(new Paragraph(paragrapheAimprimer));
-					}
-										
+					}			
 					fichier.close();
-		
+
+					Stage popupStage = new Stage();
+					Scene imprimer = new Impression();
+					popupStage.setScene(imprimer);
+					popupStage.show();
+					
+					PauseTransition wait = new PauseTransition(Duration.seconds(2));
+		            wait.setOnFinished((e) -> {
+		                /*YOUR METHOD*/
+		                popupStage.close();
+		            });
+		            wait.play();
+			
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
 				}
-						
+				System.out.println("JE GENERE UN PDF");
 			}
-
 		});
 		
 		// ----------------------- RECHERCHE MULTICRITERE -----------------------//

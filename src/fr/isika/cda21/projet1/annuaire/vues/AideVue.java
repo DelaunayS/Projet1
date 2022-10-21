@@ -8,11 +8,15 @@ import com.itextpdf.text.DocumentException;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.Couleur;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -28,6 +32,7 @@ public class AideVue extends Scene {
 
 	// attributs
 	private Label titreLabel;
+	private ScrollBar scrollBar;
 	private BorderPane root;
 	private HBox panneauHaut;
 	private Button retourButton;
@@ -58,9 +63,22 @@ public class AideVue extends Scene {
 
 	// constructeurs
 	public AideVue(Annuaire annuaire, Stage primaryStage) throws FileNotFoundException {
+		
 		super(new BorderPane(), 650, 650);
+		
 		root = ((BorderPane) this.getRoot());
-
+		scrollBar=new ScrollBar();
+		scrollBar.setLayoutX(root.getWidth()-scrollBar.getWidth());
+		scrollBar.setMin(0);
+		scrollBar.setOrientation(Orientation.VERTICAL);	
+		scrollBar.setPrefHeight(50);
+		scrollBar.setMax(200);
+		scrollBar.setValue(100);
+		scrollBar.setUnitIncrement(30);
+	    scrollBar.setBlockIncrement(35);
+	   
+	    
+				
 		// En haut
 		panneauHaut=new HBox();
 		root.setTop(panneauHaut);
@@ -79,10 +97,12 @@ public class AideVue extends Scene {
 		// Au milieu
 		centrePage = new VBox();
 		root.setCenter(centrePage);
+		centrePage.getChildren().add(scrollBar);
 
 		// ligne 1
 		ligne1 = new GridPane();
 		ligne1Case1 = new VBox();
+		ligne1Case1.setPrefWidth(350);
 		ligne1Case2 = new VBox();
 		buttonLigne1 = new Button("Ajouter");
 		
@@ -98,8 +118,8 @@ public class AideVue extends Scene {
 		ligne1.setPadding(new Insets(20, 20, 20, 20));
 		ligne1Case1.setPadding(new Insets(20, 20, 20, 20));
 		
-		FileInputStream inputstream = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/AjouterStagiaire.png");
-		Image imageLigne1=new Image(inputstream);
+		FileInputStream inputstream1 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/AjouterStagiaire.png");
+		Image imageLigne1=new Image(inputstream1);
 		ImageView image1View = new ImageView(imageLigne1);
 		image1View.setFitHeight(250);
 		image1View.setFitWidth(250);
@@ -108,6 +128,7 @@ public class AideVue extends Scene {
 		// ligne 2
 		ligne2 = new GridPane();
 		ligne2Case1 = new VBox();
+		ligne2Case1.setPrefWidth(350);
 		ligne2Case2 = new VBox();
 		buttonLigne2 = new Button("Rechercher");			
 		labelLigne2 = new Label("Permet la recherche par nom :\n"
@@ -135,7 +156,7 @@ public class AideVue extends Scene {
 				ligne3 = new GridPane();
 				ligne3Case1 = new VBox();
 				ligne3Case2 = new VBox();
-				buttonLigne3 = new Button("Ajouter");
+				buttonLigne3 = new Button("Modifier");
 				
 				labelLigne3 = new Label("Permet l'ajout de stagiaire :\n"
 						+"1) apparition d'une fenêtre \n"
@@ -145,16 +166,16 @@ public class AideVue extends Scene {
 						+"5) le stagiaire est dans la vue principale");
 				ligne3Case1.getChildren().addAll(buttonLigne3, labelLigne3);
 				ligne3.addRow(2, ligne3Case1, ligne3Case2);
-				centrePage.getChildren().add(ligne1);
+				centrePage.getChildren().add(ligne3);
 				ligne3.setPadding(new Insets(20, 20, 20, 20));
 				ligne3Case1.setPadding(new Insets(20, 20, 20, 20));
-				
+//				
 				FileInputStream inputstream3 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/AjouterStagiaire.png");
 				Image imageLigne3=new Image(inputstream3);
 				ImageView image3View = new ImageView(imageLigne3);
 				image3View.setFitHeight(250);
 				image3View.setFitWidth(250);
-				ligne3Case2.getChildren().add(image1View);
+				ligne3Case2.getChildren().add(image3View);
 		
 
 		/* clic sur le bouton retour */
@@ -171,6 +192,14 @@ public class AideVue extends Scene {
 				e.printStackTrace();
 			}
 		});
+		
+		// action sur la scrollbar
+		scrollBar.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                Number old_val, Number new_val) {
+                    centrePage.setLayoutY(-new_val.doubleValue());
+            }
+        });
 
 	}
 
