@@ -50,8 +50,9 @@ public class Supprimer extends Scene {
 	public Supprimer(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
 			ObservableList<Stagiaire> listeObservableStagiaires) {
 		super(new BorderPane(), 300, 200);
-		fenetreSupprimer = new Stage();
+		fenetreSupprimer = new Stage();			
 		racine = ((BorderPane) this.getRoot());
+		racine.setStyle("-fx-background-color :"+Color.web(Couleur.FLORAL));
 		demandeDeConfirmation = new Label("Confirmer la suppression de");
 		demandeDeConfirmation.setTextFill(Color.web(Couleur.DANGER));
 		demandeDeConfirmation.setFont(Font.font("Regular", FontWeight.BOLD, 13));

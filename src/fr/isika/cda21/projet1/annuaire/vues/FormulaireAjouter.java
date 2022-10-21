@@ -73,7 +73,7 @@ public class FormulaireAjouter extends Scene {
 	// taille
 	public FormulaireAjouter(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
 			ObservableList<Stagiaire> listeObservableStagiaires) {
-		super(new GridPane(), 580, 400);
+		super(new GridPane(), 580, 300);
 		nouvelleFenetre = new Stage();
 		nouvelleFenetre.setTitle("Ajouter un stagiaire");
 		this.annuaire = annuaire;
@@ -117,7 +117,7 @@ public class FormulaireAjouter extends Scene {
 		// Création étiquette et bouton choix de département + fixation largeur
 		etiquetteDepartement = new Label("Département");
 		choixDepartement = new ComboBox<String>();
-		choixDepartement.setMinWidth(LARGEUR_BOUTON);
+		choixDepartement.setMaxWidth(Double.MAX_VALUE);
 
 		// Ajout des départements
 		choixDepartement.getItems().addAll("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
@@ -158,7 +158,7 @@ public class FormulaireAjouter extends Scene {
 		// de sa largeur
 		etiquetteAnnee = new Label("Année de formation");
 		choixAnnee = new ComboBox<String>();
-		choixAnnee.setMinWidth(LARGEUR_BOUTON);
+		choixAnnee.setMaxWidth(Double.MAX_VALUE);
 
 		// Ajout des années
 		choixAnnee.getItems().addAll("2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009",
@@ -200,7 +200,7 @@ public class FormulaireAjouter extends Scene {
 
 		// Ajouts de marges de bordure sur le panneauRacine (Haut,Droit,Bas,Gauche)
 		// marges entre lignes et colonnes
-		panneauRacine.setPadding(new Insets(15, 20, 10, 35));
+		panneauRacine.setPadding(new Insets(15, 15, 15, 15));
 		panneauRacine.setVgap(20);
 		panneauRacine.setHgap(30);
 
@@ -259,7 +259,7 @@ public class FormulaireAjouter extends Scene {
 					}
 
 				} else {
-					etiquetteMessageErreur.setText(" Données non valides veuillez recommencer...");
+					etiquetteMessageErreur.setText("Données non valides");
 				}
 
 			}

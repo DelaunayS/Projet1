@@ -52,7 +52,7 @@ public class Modifier extends Scene {
 	private Label etiquetteAnnee;
 	private ComboBox<String> choixAnnee;
 	private Button boutonValider;
-	private Label etiquetteMessageErreur;	
+	private Label etiquetteMessageErreur;
 	private String nom;
 	private String prenom;
 	private Tooltip infoBulleNom;
@@ -191,120 +191,143 @@ public class Modifier extends Scene {
 		panneauRacine.setVgap(20);
 		panneauRacine.setHgap(30);
 
+		/*----------------- JE RECUPERE LES INFOS DE LA LIGNE SUR LAQUELLE JE SUIS POSITIONNEE ----------------- */
 
-/*----------------- JE RECUPERE LES INFOS DE LA LIGNE SUR LAQUELLE JE SUIS POSITIONNEE ----------------- */
+		/* on crée un nouveau stagiaire sélectionné */
 
-		
-		/* on crée un nouveau stagiaire sélectionné */ 
-		
 		/* on lui attribue tous les champs de la ligne sur laquelle on se trouve */
-		
+
 		Stagiaire stagiaireselectionne = new Stagiaire();
 		String selectedFormation = listeStagiaires.getSelectionModel().getSelectedItem().getLibelleFormation();
-		String[] attributsFormation = selectedFormation.split(" ");
-		
+		String[] attributsFormation;
+
 		stagiaireselectionne.setNom(listeStagiaires.getSelectionModel().getSelectedItem().getNom());
 		champTexteNom.setText(stagiaireselectionne.getNom());
 
 		stagiaireselectionne.setPrenom(listeStagiaires.getSelectionModel().getSelectedItem().getPrenom());
 		champTextePrenom.setText(stagiaireselectionne.getPrenom());
 
-		
-		if (listeStagiaires.getSelectionModel().getSelectedItem().getDepartement().equals(null)) {
+		if (listeStagiaires.getSelectionModel().getSelectedItem().getDepartement() == (null)) {
 			stagiaireselectionne.setDepartement("");
-		}else {
+		} else {
 			stagiaireselectionne.setDepartement(listeStagiaires.getSelectionModel().getSelectedItem().getDepartement());
 			choixDepartement.setValue(stagiaireselectionne.getDepartement());
 		}
-		
+
 		String nomFormation = "";
 		String promo = "";
 		String contrat = "";
-		
-		if(listeStagiaires.getSelectionModel().getSelectedItem().getLibelleFormation().equals(null)){
+
+		if (listeStagiaires.getSelectionModel().getSelectedItem().getLibelleFormation().equals("")) {
 			stagiaireselectionne.setLibelleFormation("");
 		} else {
-			if (attributsFormation[0] != null) {
-		nomFormation = attributsFormation[0];
-		choixCursus.setValue(nomFormation);
+			attributsFormation = selectedFormation.split(" ");
+
+			if (!attributsFormation[0].equals("")) {
+				nomFormation = attributsFormation[0];
+				choixCursus.setValue(nomFormation);
 			}
-			if (attributsFormation[1] != null) {
-				promo = attributsFormation[1];
-				choixNumero.setValue(promo);
-			}
-			if (attributsFormation[2] != null) {
-				if (attributsFormation[2].equals("CP")) {
-					choixContrat.setSelected(true);
+
+			if (attributsFormation.length == 2) {
+				if (!attributsFormation[1].equals("")) {
+					promo = attributsFormation[1];
+					choixNumero.setValue(promo);
 				}
-		}
+			} else if (attributsFormation.length == 3) {
+				if (!attributsFormation[1].equals("")) {
+					promo = attributsFormation[1];
+					choixNumero.setValue(promo);
+				}
+				if (!attributsFormation[2].equals("")) {
+					if (attributsFormation[2].equals("CP")) {
+						choixContrat.setSelected(true);
+					}
+				}
+
+			}
 			stagiaireselectionne.setLibelleFormation(nomFormation + " " + promo + " " + contrat);
 
 		}
-			
+
 		stagiaireselectionne.setAnnee(listeStagiaires.getSelectionModel().getSelectedItem().getAnnee());
 		choixAnnee.setValue(String.valueOf(stagiaireselectionne.getAnnee()));
-				
-		
+
 		/*---------------- PARAMETRAGE DU BOUTON VALIDER ----------------- */
-		
+
 		boutonValider.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				
-				Stagiaire stagiaireModifie = new Stagiaire
-						(champTexteNom.getText(), 
-						champTextePrenom.getText(),
-						choixDepartement.getSelectionModel().getSelectedItem(),
-						(choixCursus.getSelectionModel().getSelectedItem() + " "
-						+ choixNumero.getSelectionModel().getSelectedItem() + " "),
-						(Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem())));			
-		
+
+				Stagiaire stagiaireModifie = new Stagiaire();
+
+				stagiaireModifie.setNom(champTexteNom.getText());
+				stagiaireModifie.setPrenom(champTextePrenom.getText());
+				stagiaireModifie.setAnnee(Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem()));
+
+				if (choixDepartement.getSelectionModel().getSelectedItem() == null) {
+					stagiaireModifie.setDepartement("");
+				} else {
+					stagiaireModifie.setDepartement(choixDepartement.getSelectionModel().getSelectedItem());
+				}
+
+				if (choixCursus.getSelectionModel().getSelectedItem() == null) {
+					stagiaireModifie.setLibelleFormation("");
+				} else {
+					stagiaireModifie.setLibelleFormation(choixCursus.getSelectionModel().getSelectedItem());
+				}
+				if (choixNumero.getSelectionModel().getSelectedItem() == null) {
+					stagiaireModifie.setLibelleFormation(stagiaireModifie.getLibelleFormation());
+				} else {
+					stagiaireModifie.setLibelleFormation(stagiaireModifie.getLibelleFormation() + " "
+							+ choixNumero.getSelectionModel().getSelectedItem());
+				}
+				if (choixContrat.isSelected()) {
+					stagiaireModifie.setLibelleFormation(stagiaireModifie.getLibelleFormation() + " CP");
+				}
+
 				try {
-			
-			/* j'ajoute un nouveau stagiaire dans l'annuaire avec les informations du stagiaire sélectionné
-			* je fais appel à la méthode ajoutStagiaireModifie qui reprend les cases 
-			* mises à jour du stagiaire sélectionné
-			*/
-	
-			annuaire.getAjouterAnnuaire().ajouterStagiaire(stagiaireModifie);
-			
-			/* je supprime le stagiaire sélectionné */
 
-			annuaire.supprimerStagiaire(stagiaireselectionne);
+					/* je supprime le stagiaire sélectionné */
 
-			/* je mets la liste dans l'ordre, cela me crée une nouvelle liste (ArrayList) */
+					annuaire.supprimerStagiaire(stagiaireselectionne);
 
-			annuaire.ordreAlpha();
-						
-			
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-				
-		
-			/* j'enlève l'ancienne liste observable */
-				
-			listeObservableStagiaires.clear();
-			listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
-				
-		/* fermeture de la fenêtre */
-		Window window = boutonValider.getScene().getWindow();
-		Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
-		nouvelleFenetre.close();
+					/*
+					 * j'ajoute un nouveau stagiaire dans l'annuaire avec les informations du
+					 * stagiaire sélectionné je fais appel à la méthode ajoutStagiaireModifie qui
+					 * reprend les cases mises à jour du stagiaire sélectionné
+					 */
 
-		
-		// effacement de tous les champs
-		champTexteNom.clear();
-		champTextePrenom.clear();
-		choixDepartement.getSelectionModel().clearSelection();
-		choixCursus.getSelectionModel().clearSelection();
-		choixNumero.getSelectionModel().clearSelection();
+					annuaire.getAjouterAnnuaire().ajouterStagiaire(stagiaireModifie);
 
+					/* je mets la liste dans l'ordre, cela me crée une nouvelle liste (ArrayList) */
+
+					annuaire.ordreAlpha();
+
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				/* j'enlève l'ancienne liste observable */
+
+				listeObservableStagiaires.clear();
+				listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
+
+				/* fermeture de la fenêtre */
+				Window window = boutonValider.getScene().getWindow();
+				Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
+				nouvelleFenetre.close();
+
+				// effacement de tous les champs
+				champTexteNom.clear();
+				champTextePrenom.clear();
+				choixDepartement.getSelectionModel().clearSelection();
+				choixCursus.getSelectionModel().clearSelection();
+				choixNumero.getSelectionModel().clearSelection();
+
+			}
+
+		});
 	}
-
-});
-		}
-
 
 	public GridPane getPanneauRacine() {
 		return panneauRacine;

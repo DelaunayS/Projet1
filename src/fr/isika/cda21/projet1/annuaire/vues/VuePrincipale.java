@@ -42,7 +42,6 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-
 public class VuePrincipale extends Scene {
 
 	// ----------------------- ATTRIBUTS -----------------------//
@@ -81,6 +80,7 @@ public class VuePrincipale extends Scene {
 	private FormulaireRechercher nouvelleRecherche;
 	private TextField barreDeRecherche;
 	private Label rechercheAvancee;
+	private Label nombreTotalStagiaires;
 
 	// ----------------------- CONSTRUCTEUR -----------------------//
 
@@ -118,6 +118,7 @@ public class VuePrincipale extends Scene {
 		barreDeRecherche = new TextField();
 		conteneurBarreDeRecherche = new HBox();
 		conteneurImage = new VBox();
+		nombreTotalStagiaires = new Label();
 
 		// ----------------------- INTEGRATION DES COMPOSANTES AUX CONTENEURS
 		// -----------------------//
@@ -172,8 +173,8 @@ public class VuePrincipale extends Scene {
 		 * dans le conteneur
 		 */
 		conteneurBarreDeRecherche.setAlignment(Pos.BOTTOM_CENTER);
-		conteneurBarreDeRecherche.setMaxWidth(610);
 		conteneurBarreDeRecherche.setHgrow(barreDeRecherche, Priority.ALWAYS);
+		conteneurBarreDeRecherche.setPadding(new Insets(0, 20, 0, 20));
 
 		// ----------------------- PARAMETRAGE DE LA TABLEVIEW -----------------------//
 
@@ -205,6 +206,10 @@ public class VuePrincipale extends Scene {
 
 		/* On implémente la tableView avec la liste observable des stagiaires */
 		listeStagiaires.getItems().addAll(listeObservableStagiaires);
+		nombreTotalStagiaires = new Label("Nombre total de stagiaires : " + listeStagiaires.getItems().size());
+		conteneurImage.getChildren().add(nombreTotalStagiaires);
+		conteneurImage.setAlignment(Pos.BOTTOM_RIGHT);
+		nombreTotalStagiaires.setPadding(new Insets(10, 20, 0, 10));
 
 		// ----------------------- BOUTONS -----------------------//
 
@@ -258,7 +263,7 @@ public class VuePrincipale extends Scene {
 				nouveauFormulaire.getNouvelleFenetre().show();
 			}
 		});
-		
+
 		/* rechercher un stagiaire */
 		rechercher.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
@@ -281,10 +286,10 @@ public class VuePrincipale extends Scene {
 					/* création d'une nouvelle fenêtre */
 					((Modifier) modifier).getFenetreModifier().setScene(modifier);
 					((Modifier) modifier).getFenetreModifier().show();
-				} 
-					modeAdmin.setText("Veuillez sélectionner la ligne à modifier.");
-					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-					modeAdmin.setTextFill(Color.RED);
+				}
+				modeAdmin.setText("Veuillez sélectionner la ligne à modifier.");
+				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+				modeAdmin.setTextFill(Color.RED);
 			}
 		});
 
@@ -302,18 +307,18 @@ public class VuePrincipale extends Scene {
 					stage.setScene(supprimer);
 					/* affichage de la fenêtre */
 					stage.show();
-				} 
-					modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
-					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-					modeAdmin.setTextFill(Color.RED);
+				}
+				modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
+				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+				modeAdmin.setTextFill(Color.RED);
 			}
 		});
 
-		/*clic sur le bouton aide*/
+		/* clic sur le bouton aide */
 		aide.setOnAction(eventAction -> {
 			Scene scene;
 			try {
-				scene = new AideVue(annuaire,primaryStage);
+				scene = new AideVue(annuaire, primaryStage);
 				Stage stage = (Stage) VuePrincipale.this.getRoot().getScene().getWindow();
 				stage.setScene(scene);
 				stage.show();
@@ -321,10 +326,9 @@ public class VuePrincipale extends Scene {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		});
-		
-		
+
 		/* fermer l'application */
 		quitter.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
@@ -332,50 +336,49 @@ public class VuePrincipale extends Scene {
 				((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
 			}
 		});
-		
-		
-/* imprimer la liste */
-		
+
+		/* imprimer la liste */
+
 		impression.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				Document fichier = new Document();
 				ArrayList<Stagiaire> listeAimprimer = new ArrayList<>();
 				listeAimprimer.addAll(listeStagiaires.getItems());
-	
+
 				try {
-					PdfWriter.getInstance(fichier, new FileOutputStream("./src/fr/isika/cda21/projet1/annuaire/utilitaires/Liste_Stagiaires.pdf"));
+					PdfWriter.getInstance(fichier, new FileOutputStream(
+							"./src/fr/isika/cda21/projet1/annuaire/utilitaires/Liste_Stagiaires.pdf"));
 					fichier.open();
 					fichier.add(new Paragraph("LISTE DES STAGIAIRES"));
-					
+
 					for (Stagiaire stagiaireAimprimer : listeAimprimer) {
-					String paragrapheAimprimer = stagiaireAimprimer.getNom() +
-							" " + stagiaireAimprimer.getPrenom() +
-							" - Departement : " + stagiaireAimprimer.getDepartement() + 
-							" - Formation : " + stagiaireAimprimer.getLibelleFormation() + 
-							" - Année de formation : " + String.valueOf(stagiaireAimprimer.getAnnee()); 
-					fichier.add(new Paragraph(paragrapheAimprimer));
-					}			
+						String paragrapheAimprimer = stagiaireAimprimer.getNom() + " " + stagiaireAimprimer.getPrenom()
+								+ " - Departement : " + stagiaireAimprimer.getDepartement() + " - Formation : "
+								+ stagiaireAimprimer.getLibelleFormation() + " - Année de formation : "
+								+ String.valueOf(stagiaireAimprimer.getAnnee());
+						fichier.add(new Paragraph(paragrapheAimprimer));
+					}
 					fichier.close();
 
 					Stage popupStage = new Stage();
 					Scene imprimer = new Impression();
 					popupStage.setScene(imprimer);
 					popupStage.show();
-					
+
 					PauseTransition wait = new PauseTransition(Duration.seconds(2));
-		            wait.setOnFinished((e) -> {
-		                /*YOUR METHOD*/
-		                popupStage.close();
-		            });
-		            wait.play();
-			
+					wait.setOnFinished((e) -> {
+						/* YOUR METHOD */
+						popupStage.close();
+					});
+					wait.play();
+
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
 				}
 				System.out.println("JE GENERE UN PDF");
 			}
 		});
-		
+
 		// ----------------------- RECHERCHE MULTICRITERE -----------------------//
 
 		/* on englobe la liste observable dans une liste filtrée */

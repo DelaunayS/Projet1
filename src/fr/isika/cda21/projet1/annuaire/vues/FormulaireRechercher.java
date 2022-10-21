@@ -33,7 +33,7 @@ public class FormulaireRechercher extends Scene {
 	private GridPane panneauRacine;
 	private Label etiquetteNom;
 	private TextField champTexteNom;
-	private static final int LARGEUR_CHAMP_TEXTE = 270;
+	private static final int LARGEUR_CHAMP_TEXTE = 250;
 	static final int LARGEUR_BOUTON = 77;
 	private Button boutonValider;
 	private Label etiquetteMessageErreur;
@@ -55,7 +55,7 @@ public class FormulaireRechercher extends Scene {
 	// taille
 	public FormulaireRechercher(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
 			ObservableList<Stagiaire> listObservableStagiaires) {
-		super(new GridPane(), 450, 150);
+		super(new GridPane(), 400, 100);
 		fenetreRechercher = new Stage();
 		fenetreRechercher.setTitle(" Rechercher un stagiaire");
 		fenetreRechercher.setX(710);
@@ -101,7 +101,7 @@ public class FormulaireRechercher extends Scene {
 		// Remplissage bouton Valider avec couleur texte et fond
 		boutonValider.setTextFill(Color.web(COULEUR_BG_WHITE));
 		boutonValider.setFont(Font.font("Regular", FontWeight.BOLD, 13));
-		boutonValider.setStyle("-fx-background-color : " + COULEUR_BG_INFO);
+		boutonValider.setStyle("-fx-background-color : " + Color.web(Couleur.PRIMARY));
 
 		// Ajouts des étiquettes et boutons en tant que noeuds enfants du panneauRacine
 		panneauRacine.addRow(0, etiquetteNom, champTexteNom);
@@ -112,7 +112,7 @@ public class FormulaireRechercher extends Scene {
 
 		// Ajouts de marges de bordure sur le panneauRacine
 		// (marge haute / marge droite / marge basse / marge gauche)
-		panneauRacine.setPadding(new Insets(15, 20, 10, 35));
+		panneauRacine.setPadding(new Insets(15, 15, 15, 15));
 
 		// Ajout de marges entre les étiquettes, les champs de texte et boutons du
 		// panneauRacine

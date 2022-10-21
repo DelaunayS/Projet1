@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -32,7 +33,7 @@ public class AideVue extends Scene {
 
 	// attributs
 	private Label titreLabel;
-	private ScrollBar scrollBar;
+	private ScrollPane scrollPane;
 	private BorderPane root;
 	private HBox panneauHaut;
 	private Button retourButton;
@@ -66,22 +67,12 @@ public class AideVue extends Scene {
 		
 		super(new BorderPane(), 650, 650);
 		
-		root = ((BorderPane) this.getRoot());
-		scrollBar=new ScrollBar();
-		scrollBar.setLayoutX(root.getWidth()-scrollBar.getWidth());
-		scrollBar.setMin(0);
-		scrollBar.setOrientation(Orientation.VERTICAL);	
-		scrollBar.setPrefHeight(50);
-		scrollBar.setMax(200);
-		scrollBar.setValue(100);
-		scrollBar.setUnitIncrement(30);
-	    scrollBar.setBlockIncrement(35);
-	   
-	    
+		root = ((BorderPane) this.getRoot());		
+		scrollPane=new ScrollPane();	    
 				
 		// En haut
 		panneauHaut=new HBox();
-		root.setTop(panneauHaut);
+		
 		titreLabel = new Label("Page d'aide");		
 		titreLabel.setStyle("-fx-font : 25 arial;");
 		retourButton = new Button("Retour");
@@ -95,14 +86,12 @@ public class AideVue extends Scene {
 		panneauHaut.setAlignment(Pos.CENTER);		
 
 		// Au milieu
-		centrePage = new VBox();
-		root.setCenter(centrePage);
-		centrePage.getChildren().add(scrollBar);
-
+		centrePage = new VBox();	
+		
 		// ligne 1
 		ligne1 = new GridPane();
 		ligne1Case1 = new VBox();
-		ligne1Case1.setPrefWidth(350);
+		ligne1Case1.setPrefWidth(300);
 		ligne1Case2 = new VBox();
 		buttonLigne1 = new Button("Ajouter");
 		
@@ -115,20 +104,20 @@ public class AideVue extends Scene {
 		ligne1Case1.getChildren().addAll(buttonLigne1, labelLigne1);
 		ligne1.addRow(0, ligne1Case1, ligne1Case2);
 		centrePage.getChildren().add(ligne1);
-		ligne1.setPadding(new Insets(20, 20, 20, 20));
-		ligne1Case1.setPadding(new Insets(20, 20, 20, 20));
+		ligne1.setPadding(new Insets(10, 20, 20, 10));
+		ligne1Case1.setPadding(new Insets(10, 20, 20, 10));
 		
 		FileInputStream inputstream1 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/AjouterStagiaire.png");
 		Image imageLigne1=new Image(inputstream1);
 		ImageView image1View = new ImageView(imageLigne1);
-		image1View.setFitHeight(250);
-		image1View.setFitWidth(250);
+		image1View.setFitHeight(300);
+		image1View.setFitWidth(300);
 		ligne1Case2.getChildren().add(image1View);
 
 		// ligne 2
 		ligne2 = new GridPane();
 		ligne2Case1 = new VBox();
-		ligne2Case1.setPrefWidth(350);
+		ligne2Case1.setPrefWidth(300);
 		ligne2Case2 = new VBox();
 		buttonLigne2 = new Button("Rechercher");			
 		labelLigne2 = new Label("Permet la recherche par nom :\n"
@@ -142,13 +131,13 @@ public class AideVue extends Scene {
 		ligne2Case1.getChildren().addAll(buttonLigne2, labelLigne2);
 		ligne2.addRow(1, ligne2Case1, ligne2Case2);
 		centrePage.getChildren().add(ligne2);
-		ligne2.setPadding(new Insets(20, 20, 20, 20));
-		ligne2Case1.setPadding(new Insets(20, 20, 20, 20));
+		ligne2.setPadding(new Insets(10, 20, 20, 10));
+		ligne2Case1.setPadding(new Insets(10, 20, 20, 10));
 				
-		FileInputStream inputstream2 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/AjouterStagiaire.png");
+		FileInputStream inputstream2 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/RechercherStagiaire.png");
 		Image imageLigne2=new Image(inputstream2);
 		ImageView image2View = new ImageView(imageLigne2);
-		image2View.setFitHeight(250);
+		image2View.setFitHeight(150);
 		image2View.setFitWidth(250);
 		ligne2Case2.getChildren().add(image2View);
 		
@@ -158,7 +147,7 @@ public class AideVue extends Scene {
 				ligne3Case2 = new VBox();
 				buttonLigne3 = new Button("Modifier");
 				
-				labelLigne3 = new Label("Permet l'ajout de stagiaire :\n"
+				labelLigne3 = new Label("Modifier de stagiaire :\n"
 						+"1) apparition d'une fenêtre \n"
 						+"2) remplir les champs souhaités, \n"
 						+"3) cliquer sur le bouton valider.\n"
@@ -167,16 +156,19 @@ public class AideVue extends Scene {
 				ligne3Case1.getChildren().addAll(buttonLigne3, labelLigne3);
 				ligne3.addRow(2, ligne3Case1, ligne3Case2);
 				centrePage.getChildren().add(ligne3);
-				ligne3.setPadding(new Insets(20, 20, 20, 20));
-				ligne3Case1.setPadding(new Insets(20, 20, 20, 20));
+				ligne3.setPadding(new Insets(10, 20, 20, 10));
+				ligne3Case1.setPadding(new Insets(10, 20, 20, 10));
 //				
-				FileInputStream inputstream3 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/AjouterStagiaire.png");
+				FileInputStream inputstream3 = new FileInputStream("src/fr/isika/cda21/projet1/annuaire/utilitaires/ModifierStagiaire.png");
 				Image imageLigne3=new Image(inputstream3);
 				ImageView image3View = new ImageView(imageLigne3);
-				image3View.setFitHeight(250);
-				image3View.setFitWidth(250);
+				image3View.setFitHeight(300);
+				image3View.setFitWidth(300);
 				ligne3Case2.getChildren().add(image3View);
 		
+				scrollPane.setContent(panneauHaut);
+				scrollPane.setContent(centrePage);
+				root.setCenter(scrollPane);
 
 		/* clic sur le bouton retour */
 		retourButton.setOnAction(eventAction -> {
@@ -192,14 +184,7 @@ public class AideVue extends Scene {
 				e.printStackTrace();
 			}
 		});
-		
-		// action sur la scrollbar
-		scrollBar.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov,
-                Number old_val, Number new_val) {
-                    centrePage.setLayoutY(-new_val.doubleValue());
-            }
-        });
+			
 
 	}
 

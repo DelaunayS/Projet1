@@ -50,8 +50,7 @@ public class ParcourirAnnuaire {
 		}
 		
 		//on ajoute le noeud à la liste des stagiaires
-		listeDeStagiaires.add(noeudCourant.getCle());
-		System.out.println(noeudCourant);
+		listeDeStagiaires.add(noeudCourant.getCle());		
 
 		// on vérifie s'il existe un noeud à droite
 		if (noeudCourant.getFilsDroit() != -1) {

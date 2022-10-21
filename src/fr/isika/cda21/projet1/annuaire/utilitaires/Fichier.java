@@ -10,7 +10,7 @@ import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 
 public class Fichier {
 
-	private static String cheminFichierTxt = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/TEST.DON";
+	private static String cheminFichierTxt = "./src/fr/isika/cda21/projet1/annuaire/utilitaires/STAGIAIRES.DON";
 
 	// attributs
 	private String nom;
