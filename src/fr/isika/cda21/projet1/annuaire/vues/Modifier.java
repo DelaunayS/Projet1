@@ -36,7 +36,7 @@ public class Modifier extends Scene {
 	private GridPane panneauRacine;
 	private Label etiquetteNom;
 	private TextField champTexteNom;
-	private static final int LARGEUR_CHAMP_TEXTE = 210;
+	private static final int LARGEUR_CHAMP_TEXTE = 200;
 	private Label etiquettePrenom;
 	private TextField champTextePrenom;
 	private Label etiquetteDepartement;
@@ -67,20 +67,20 @@ public class Modifier extends Scene {
 
 	public Modifier(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
 			ObservableList<Stagiaire> listeObservableStagiaires) {
-		super(new GridPane(), 580, 350);
+		super(new GridPane(), 580, 300);
 		fenetreModifier = new Stage();
 		fenetreModifier.setTitle("Modifier un stagiaire");
 		panneauRacine = ((GridPane) this.getRoot());
-		panneauRacine.setStyle("-fx-background-color : floralwhite");
-		etiquetteNom = new Label("NOM : ");
+		panneauRacine.setStyle("-fx-background-color :"+Couleur.FLORAL);
+		etiquetteNom = new Label("NOM");
 		champTexteNom = new TextField();
 		champTexteNom.setMinWidth(250);
-		etiquettePrenom = new Label("Prénom : ");
+		etiquettePrenom = new Label("Prénom");
 		champTextePrenom = new TextField();
 		etiquetteDepartement = new Label("Département : ");
 		choixDepartement = new ComboBox<String>();
 		choixDepartement.setMinWidth(83);
-		etiquetteLibelleFormation = new Label("Cursus  /  Numéro  /  Contrat Pro");
+		etiquetteLibelleFormation = new Label("Cursus / Numéro / Contrat Pro");
 		choixCursus = new ComboBox<String>();
 		choixNumero = new ComboBox<String>();
 		choixContrat = new CheckBox();
@@ -97,6 +97,7 @@ public class Modifier extends Scene {
 
 		/*----------------- PARAMETRAGE DES ATTRIBUTS ----------------- */
 
+		etiquetteNom.setFont(Font.font("Regular", FontWeight.BOLD, 13));
 		etiquettePrenom.setFont(Font.font("Regular", FontWeight.BOLD, 13));
 
 		/*----------------- CREATION INFO-BULLE POUR LES CHAMPS DE TEXTE ----------------- */
@@ -186,7 +187,7 @@ public class Modifier extends Scene {
 		panneauRacine.addRow(5, etiquetteMessageErreur);
 		panneauRacine.addRow(6, boutonValider);
 
-		panneauRacine.setPadding(new Insets(15, 20, 10, 35));
+		panneauRacine.setPadding(new Insets(15, 15, 15, 15));
 
 		panneauRacine.setVgap(20);
 		panneauRacine.setHgap(30);
@@ -313,6 +314,7 @@ public class Modifier extends Scene {
 				listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
 
 				/* fermeture de la fenêtre */
+				@SuppressWarnings("unused")
 				Window window = boutonValider.getScene().getWindow();
 				Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
 				nouvelleFenetre.close();

@@ -13,7 +13,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
+import fr.isika.cda21.projet1.annuaire.utilitaires.Couleur;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -79,11 +81,14 @@ public class VuePrincipale extends Scene {
 	private FormulaireAjouter nouveauFormulaire;
 	private FormulaireRechercher nouvelleRecherche;
 	private TextField barreDeRecherche;
+	@SuppressWarnings("unused")
 	private Label rechercheAvancee;
 	private Label nombreTotalStagiaires;
+	private Button rafraichir;
 
 	// ----------------------- CONSTRUCTEUR -----------------------//
 
+	@SuppressWarnings({ "static-access", "unchecked" })
 	public VuePrincipale(Annuaire annuaire, Stage primaryStage) throws IOException, DocumentException {
 		super(new BorderPane(), 650, 650);
 		root = ((BorderPane) this.getRoot());
@@ -119,6 +124,7 @@ public class VuePrincipale extends Scene {
 		conteneurBarreDeRecherche = new HBox();
 		conteneurImage = new VBox();
 		nombreTotalStagiaires = new Label();
+		rafraichir = new Button("Rafraichir la page");
 
 		// ----------------------- INTEGRATION DES COMPOSANTES AUX CONTENEURS
 		// -----------------------//
@@ -228,13 +234,13 @@ public class VuePrincipale extends Scene {
 					supprimer.setVisible(true);
 					modeAdmin.setText("Vous êtes en mode administrateur");
 					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-					modeAdmin.setTextFill(Color.GREEN);
+					modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
 
 				} else { /* sinon message d'erreur et les boutons restent cachés */
 
 					modeAdmin.setText("Mot de passe erroné. Veuillez réessayer.");
 					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-					modeAdmin.setTextFill(Color.RED);
+					modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 				}
 			}
 		});
@@ -289,7 +295,7 @@ public class VuePrincipale extends Scene {
 				}
 				modeAdmin.setText("Veuillez sélectionner la ligne à modifier.");
 				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-				modeAdmin.setTextFill(Color.RED);
+				modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 			}
 		});
 
@@ -310,7 +316,7 @@ public class VuePrincipale extends Scene {
 				}
 				modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
 				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-				modeAdmin.setTextFill(Color.RED);
+				modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
 			}
 		});
 
@@ -328,6 +334,20 @@ public class VuePrincipale extends Scene {
 			}
 
 		});
+		conteneurLogin.getChildren().add(rafraichir);
+		rafraichir.setAlignment(Pos.BOTTOM_LEFT);
+		
+		rafraichir.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				Platform.runLater(()->{
+				    listeStagiaires.setItems(listeObservableStagiaires);
+				});			
+			}
+		
+		
+		});
+		
+		
 
 		/* fermer l'application */
 		quitter.setOnAction(new EventHandler<ActionEvent>() {
@@ -374,8 +394,7 @@ public class VuePrincipale extends Scene {
 
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
-				}
-				System.out.println("JE GENERE UN PDF");
+				}				
 			}
 		});
 

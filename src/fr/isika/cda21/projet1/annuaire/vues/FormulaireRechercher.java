@@ -36,16 +36,13 @@ public class FormulaireRechercher extends Scene {
 	private static final int LARGEUR_CHAMP_TEXTE = 250;
 	static final int LARGEUR_BOUTON = 77;
 	private Button boutonValider;
-	private Label etiquetteMessageErreur;
-	private static final String COULEUR_BG_WHITE = "#ffffff";
-	private static final String COULEUR_BG_INFO = "#17a2b8";
-	private static final String COULEUR_BG_SECONDARY = "#6c757d";
-	private static final String COULEUR_BG_DANGER = "#dc3545";
-	private static final String COULEUR_BG_SUCCESS = "#28a745";
+	private Label etiquetteMessageErreur;	
 	private String nom;	
 	private Tooltip infoBulleNom;
 	private Stage fenetreRechercher;
+	@SuppressWarnings("unused")
 	private Annuaire annuaire;
+	@SuppressWarnings("unused")
 	private TableView<Stagiaire> listeStagiaires;
 	ObservableList<Stagiaire> listeObservableStagiaires;
 
@@ -66,7 +63,7 @@ public class FormulaireRechercher extends Scene {
 
 		// Affectation à la racine du panneauRacine
 		panneauRacine = ((GridPane) this.getRoot());
-		panneauRacine.setStyle("-fx-background-color : floralwhite");
+		panneauRacine.setStyle("-fx-background-color :"+Couleur.FLORAL);
 
 		// ********************************************************
 		// INSTANCIATION DES ETIQUETTES, CHAMPS DE TEXTE ET BOUTONS
@@ -82,7 +79,7 @@ public class FormulaireRechercher extends Scene {
 		// Création info-bulle pour le champ de texte Nom
 		infoBulleNom = new Tooltip(
 				"Nom ne comportant aucun caractère spécial, ni chiffre,\n ni accent/cédille et ayant au moins 2 lettres");
-		infoBulleNom.setStyle("-fx-background-color : " + COULEUR_BG_SECONDARY);
+		infoBulleNom.setStyle("-fx-background-color : " + Couleur.SECONDARY);
 		infoBulleNom.setFont(Font.font("Regular", FontPosture.ITALIC, 12));
 		champTexteNom.setTooltip(infoBulleNom);
 		infoBulleNom.setTextAlignment(TextAlignment.CENTER);
@@ -90,7 +87,7 @@ public class FormulaireRechercher extends Scene {
 		// Création étiquette pour affichage message d'erreur à côté du bouton
 		// Valider
 		etiquetteMessageErreur = new Label();
-		etiquetteMessageErreur.setTextFill(Color.web(COULEUR_BG_DANGER));
+		etiquetteMessageErreur.setTextFill(Color.web(Couleur.DANGER));
 		etiquetteMessageErreur.setFont(Font.font("Regular", FontWeight.BOLD, 12));
 		etiquetteMessageErreur.setTextAlignment(TextAlignment.CENTER);
 
@@ -99,9 +96,9 @@ public class FormulaireRechercher extends Scene {
 		boutonValider.setMinWidth(LARGEUR_BOUTON);
 
 		// Remplissage bouton Valider avec couleur texte et fond
-		boutonValider.setTextFill(Color.web(COULEUR_BG_WHITE));
+		boutonValider.setTextFill(Color.web(Couleur.LIGHT));
 		boutonValider.setFont(Font.font("Regular", FontWeight.BOLD, 13));
-		boutonValider.setStyle("-fx-background-color : " + Color.web(Couleur.PRIMARY));
+		boutonValider.setStyle("-fx-background-color : " + Couleur.PRIMARY);
 
 		// Ajouts des étiquettes et boutons en tant que noeuds enfants du panneauRacine
 		panneauRacine.addRow(0, etiquetteNom, champTexteNom);
@@ -134,8 +131,7 @@ public class FormulaireRechercher extends Scene {
 
 				// Conversion du mom en MAJUSCULES;
 				nom = nom.toUpperCase();
-
-				System.out.println("nom ="+nom);
+				
 				if (!(nom.equals(""))) {
 					try {
 						
@@ -153,6 +149,7 @@ public class FormulaireRechercher extends Scene {
 							listeObservableStagiaires.clear();
 							listeObservableStagiaires.setAll(listeStagiaireSelectionne);		
 							
+							@SuppressWarnings("unused")
 							Window window = boutonValider.getScene().getWindow();
 							Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
 							nouvelleFenetre.close();							

@@ -1,20 +1,13 @@
 package fr.isika.cda21.projet1.annuaire.vues;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.io.IOException;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.Couleur;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,13 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -66,6 +53,7 @@ public class FormulaireAjouter extends Scene {
 	private Tooltip infoBulleNom;
 	private Tooltip infoBullePrenom;
 	private Stage nouvelleFenetre;
+	@SuppressWarnings("unused")
 	private Annuaire annuaire;
 
 	// Constructeur Formulaire rattachée à la classe mère
@@ -133,7 +121,7 @@ public class FormulaireAjouter extends Scene {
 		// **********************************************************
 
 		// Création étiquette du libellé de la formation
-		etiquetteLibelleFormation = new Label("Cursus  /  Numéro  /  Contrat Pro");
+		etiquetteLibelleFormation = new Label("Cursus / Numéro / Contrat Pro");
 
 		// Création bouton choix du cursus avec fixation de sa largeur
 		choixCursus = new ComboBox<String>();
@@ -223,19 +211,19 @@ public class FormulaireAjouter extends Scene {
 				// Suppression des espaces situés au début/fin du Prénom + Majuscule sur 1ère
 				// lettre et minuscules sur le reste
 				prenom = champTextePrenom.getText().trim();
-				
+
 				if (prenom.length() > 2) {
 					prenom = prenom.substring(0, 1).toUpperCase() + prenom.substring(1).toLowerCase();
 				}
 
-				
 				// Refus validation Nom/Prénom si caractères autres que :
 				// lettres minuscules/Majuscules, espace, tiret, parenthèses et 16 lettres avec
 				// signes
 				// diacritiques (accents et cédille)
 
 				if (((nom.matches("[A-Z, ,--]+"))) && (nom.length() > 1)
-						&& ((prenom.matches("[a-zA-Z, ,--,(,),à,â,ä,é,è,ê,ë,î,ï,ô,ö,ù,û,ü,ÿ,ç]+")))) {
+						&& ((prenom.matches("[a-zA-Z, ,--,(,),à,â,ä,é,è,ê,ë,î,ï,ô,ö,ù,û,ü,ÿ,ç]+")))
+						&& (prenom.length() > 0)) {
 
 					try {
 						annuaire.ajouterStagiaire(ajoutNouveauStagiaire());
@@ -243,6 +231,7 @@ public class FormulaireAjouter extends Scene {
 						listeObservableStagiaires.clear();
 						listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
 
+						@SuppressWarnings("unused")
 						Window window = boutonValider.getScene().getWindow();
 						Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();
 						nouvelleFenetre.close();

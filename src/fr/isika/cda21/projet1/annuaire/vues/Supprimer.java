@@ -5,7 +5,6 @@ import java.io.IOException;
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.Couleur;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,6 +36,7 @@ public class Supprimer extends Scene {
 	private HBox conteneurBoutons;
 	private VBox conteneurInfos;
 	private VBox structure;
+	@SuppressWarnings("unused")
 	private TableView<Stagiaire> listeStagiaires;
 	ObservableList<Stagiaire> listeObservableStagiaires;
 	private Label nom;
@@ -52,7 +52,7 @@ public class Supprimer extends Scene {
 		super(new BorderPane(), 300, 200);
 		fenetreSupprimer = new Stage();			
 		racine = ((BorderPane) this.getRoot());
-		racine.setStyle("-fx-background-color :"+Color.web(Couleur.FLORAL));
+		racine.setStyle("-fx-background-color :"+Couleur.FLORAL);
 		demandeDeConfirmation = new Label("Confirmer la suppression de");
 		demandeDeConfirmation.setTextFill(Color.web(Couleur.DANGER));
 		demandeDeConfirmation.setFont(Font.font("Regular", FontWeight.BOLD, 13));
@@ -189,6 +189,7 @@ public class Supprimer extends Scene {
 
 	/* méthode fermeture de la fenêtre */
 	private void fermerFenetre(Button button) {
+		@SuppressWarnings("unused")
 		Window window = button.getScene().getWindow();
 		Stage nouvelleFenetre = (Stage) button.getScene().getWindow();
 		nouvelleFenetre.close();

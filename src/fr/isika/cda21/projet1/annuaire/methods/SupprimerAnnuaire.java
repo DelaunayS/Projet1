@@ -2,7 +2,6 @@ package fr.isika.cda21.projet1.annuaire.methods;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Noeud;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
