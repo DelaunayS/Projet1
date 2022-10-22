@@ -100,8 +100,6 @@ public class Supprimer extends Scene {
 		departement.setText("Département : " + stagiaireSelectionne.getDepartement());
 		libelleformation.setText("Cursus : " + stagiaireSelectionne.getLibelleFormation());
 		annee.setText(String.valueOf("Année : " + stagiaireSelectionne.getAnnee()));
-
-		
 		
 		
 		// ----------------------- CONFIGURATION DES BOUTONS -----------------------//
@@ -115,8 +113,7 @@ public class Supprimer extends Scene {
 				try {
 					annuaire.supprimerStagiaire(selection);
 					annuaire.ordreAlpha();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				} catch (IOException e) {					
 					e.printStackTrace();
 				}
 				

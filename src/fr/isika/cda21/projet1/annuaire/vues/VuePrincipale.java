@@ -8,7 +8,11 @@ import java.util.ArrayList;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
@@ -336,18 +340,15 @@ public class VuePrincipale extends Scene {
 		});
 		conteneurLogin.getChildren().add(rafraichir);
 		rafraichir.setAlignment(Pos.BOTTOM_LEFT);
-		
+
 		rafraichir.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Platform.runLater(()->{
-				    listeStagiaires.setItems(listeObservableStagiaires);
-				});			
+				Platform.runLater(() -> {
+					listeStagiaires.setItems(listeObservableStagiaires);
+				});
 			}
-		
-		
+
 		});
-		
-		
 
 		/* fermer l'application */
 		quitter.setOnAction(new EventHandler<ActionEvent>() {
@@ -364,20 +365,40 @@ public class VuePrincipale extends Scene {
 				Document fichier = new Document();
 				ArrayList<Stagiaire> listeAimprimer = new ArrayList<>();
 				listeAimprimer.addAll(listeStagiaires.getItems());
+				PdfPTable table = new PdfPTable(5);
+				table.setWidthPercentage(100);
+				
+
+				@SuppressWarnings("unused")
+				PdfPCell cell = null;
+
+				table.addCell(getCell("NOM", PdfPCell.ALIGN_CENTER));
+				table.addCell(getCell("PRENOM", PdfPCell.ALIGN_CENTER));
+				table.addCell(getCell("DEPARTEMENT", PdfPCell.ALIGN_CENTER));
+				table.addCell(getCell("FORMATION", PdfPCell.ALIGN_CENTER));
+				table.addCell(getCell("ANNEE", PdfPCell.ALIGN_CENTER));
 
 				try {
 					PdfWriter.getInstance(fichier, new FileOutputStream(
 							"./src/fr/isika/cda21/projet1/annuaire/utilitaires/Liste_Stagiaires.pdf"));
 					fichier.open();
-					fichier.add(new Paragraph("LISTE DES STAGIAIRES"));
+					
+					Paragraph titre = new Paragraph("LISTE DES STAGIAIRES");
+					titre.setAlignment(Element.ALIGN_CENTER);
+					fichier.add(titre);					
+					fichier.add(new Paragraph(" "));
 
-					for (Stagiaire stagiaireAimprimer : listeAimprimer) {
-						String paragrapheAimprimer = stagiaireAimprimer.getNom() + " " + stagiaireAimprimer.getPrenom()
-								+ " - Departement : " + stagiaireAimprimer.getDepartement() + " - Formation : "
-								+ stagiaireAimprimer.getLibelleFormation() + " - Année de formation : "
-								+ String.valueOf(stagiaireAimprimer.getAnnee());
-						fichier.add(new Paragraph(paragrapheAimprimer));
+					for (int j = 0; j < listeAimprimer.size(); j++) {
+
+						table.addCell(listeAimprimer.get(j).getNom());
+						table.addCell(listeAimprimer.get(j).getPrenom());
+						table.addCell(listeAimprimer.get(j).getDepartement());
+						table.addCell(listeAimprimer.get(j).getLibelleFormation());
+						table.addCell(String.valueOf(listeAimprimer.get(j).getAnnee()));
+
 					}
+					fichier.add(table);
+
 					fichier.close();
 
 					Stage popupStage = new Stage();
@@ -386,15 +407,34 @@ public class VuePrincipale extends Scene {
 					popupStage.show();
 
 					PauseTransition wait = new PauseTransition(Duration.seconds(2));
-					wait.setOnFinished((e) -> {
-						/* YOUR METHOD */
+					wait.setOnFinished((e) -> {						
 						popupStage.close();
 					});
 					wait.play();
+					
+//					try {
+//						Process lancement = Runtime
+//								   .getRuntime()
+//								   .exec("rundll32 url.dll,FileProtocolHandler "
+//								   		+ "C:\\Users\\annak\\JavaFXprojects\\Projet1\\Projet1\\src\\fr\\isika\\cda21\\projet1\\annuaire\\utilitaires\\Liste_Stagiaires.pdf");
+//						lancement.waitFor();
+//					} catch (InterruptedException e1) {						
+//						e1.printStackTrace();
+//					} catch (IOException e1) {						
+//						e1.printStackTrace();
+//					}
 
 				} catch (FileNotFoundException | DocumentException e) {
 					e.printStackTrace();
-				}				
+				}
+			}
+
+			private PdfPCell getCell(String text, int alignment) {
+				PdfPCell cell = new PdfPCell(new Phrase(text));
+				cell.setPadding(5);
+				cell.setHorizontalAlignment(alignment);
+				cell.setBorder(PdfPCell.NO_BORDER);				
+				return cell;
 			}
 		});
 
