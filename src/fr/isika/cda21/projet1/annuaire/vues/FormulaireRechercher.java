@@ -45,13 +45,15 @@ public class FormulaireRechercher extends Scene {
 	@SuppressWarnings("unused")
 	private TableView<Stagiaire> listeStagiaires;
 	ObservableList<Stagiaire> listeObservableStagiaires;
+	@SuppressWarnings("unused")
+	private Label modeAdmin;
 
 	// Constructeur FormulaireRechercher
 	// A partir de l'annuaire
 	// avec une GridPane, dont on définit la distance entre noeuds enfants et la
 	// taille
 	public FormulaireRechercher(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
-			ObservableList<Stagiaire> listObservableStagiaires) {
+			ObservableList<Stagiaire> listObservableStagiaires, Label modeAdmin) {
 		super(new GridPane(), 400, 100);
 		fenetreRechercher = new Stage();
 		fenetreRechercher.setTitle(" Rechercher un stagiaire");
@@ -60,6 +62,7 @@ public class FormulaireRechercher extends Scene {
 
 		this.annuaire = annuaire;
 		this.listeObservableStagiaires = listObservableStagiaires;
+		this.modeAdmin=modeAdmin;
 
 		// Affectation à la racine du panneauRacine
 		panneauRacine = ((GridPane) this.getRoot());
@@ -148,7 +151,9 @@ public class FormulaireRechercher extends Scene {
 							}
 							listeObservableStagiaires.clear();
 							listeObservableStagiaires.setAll(listeStagiaireSelectionne);		
-							
+							modeAdmin.setText("Recherche réussie");
+							modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+							modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
 							@SuppressWarnings("unused")
 							Window window = boutonValider.getScene().getWindow();
 							Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();

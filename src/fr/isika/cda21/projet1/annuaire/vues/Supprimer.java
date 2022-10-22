@@ -44,11 +44,13 @@ public class Supprimer extends Scene {
 	private Label departement;
 	private Label libelleformation;
 	private Label annee;
+	@SuppressWarnings("unused")
+	private Label modeAdmin;
 
 	// ----------------------- CONSTRUCTEUR SURCHARGE -----------------------//
 
 	public Supprimer(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
-			ObservableList<Stagiaire> listeObservableStagiaires) {
+			ObservableList<Stagiaire> listeObservableStagiaires, Label modeAdmin) {
 		super(new BorderPane(), 300, 200);
 		fenetreSupprimer = new Stage();			
 		racine = ((BorderPane) this.getRoot());
@@ -68,7 +70,7 @@ public class Supprimer extends Scene {
 		departement = new Label();
 		libelleformation = new Label();
 		annee = new Label();
-		
+		this.modeAdmin=modeAdmin;
 
 		// ----------------------- AJOUT DES COMPOSANTES A LA SCENE -----------------------//
 
@@ -117,8 +119,12 @@ public class Supprimer extends Scene {
 					e.printStackTrace();
 				}
 				
+				
 				listeObservableStagiaires.clear();
 				listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
+				modeAdmin.setText("Suppression réussie");
+				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+				modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
 				fermerFenetre(oui);
 			}
 		});

@@ -55,16 +55,19 @@ public class FormulaireAjouter extends Scene {
 	private Stage nouvelleFenetre;
 	@SuppressWarnings("unused")
 	private Annuaire annuaire;
+	@SuppressWarnings("unused")
+	private Label modeAdmin;
 
 	// Constructeur Formulaire rattachée à la classe mère
 	// avec une GridPane, dont on définit la distance entre noeuds enfants et la
 	// taille
 	public FormulaireAjouter(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
-			ObservableList<Stagiaire> listeObservableStagiaires) {
+			ObservableList<Stagiaire> listeObservableStagiaires,Label modeAdmin) {
 		super(new GridPane(), 580, 300);
 		nouvelleFenetre = new Stage();
 		nouvelleFenetre.setTitle("Ajouter un stagiaire");
 		this.annuaire = annuaire;
+		this.modeAdmin=modeAdmin;
 
 		// Affectation à la racine du panneauRacine
 		panneauRacine = ((GridPane) this.getRoot());
@@ -230,7 +233,9 @@ public class FormulaireAjouter extends Scene {
 						annuaire.ordreAlpha();
 						listeObservableStagiaires.clear();
 						listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
-
+						modeAdmin.setText("Ajout réussi");
+						modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+						modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
 						@SuppressWarnings("unused")
 						Window window = boutonValider.getScene().getWindow();
 						Stage nouvelleFenetre = (Stage) boutonValider.getScene().getWindow();

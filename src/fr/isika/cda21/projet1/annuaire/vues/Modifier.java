@@ -62,11 +62,13 @@ public class Modifier extends Scene {
 	private TableView<Stagiaire> listeStagiaires;
 	private Stage fenetreModifier;
 	ObservableList<Stagiaire> listeObservableStagiaires;
+	@SuppressWarnings("unused")
+	private Label modeAdmin;
 
 	/*----------------- CONSTRUCTEUR SURCHARGE ----------------- */
 
 	public Modifier(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
-			ObservableList<Stagiaire> listeObservableStagiaires) {
+			ObservableList<Stagiaire> listeObservableStagiaires,Label modeAdmin) {
 		super(new GridPane(), 580, 300);
 		fenetreModifier = new Stage();
 		fenetreModifier.setTitle("Modifier un stagiaire");
@@ -94,6 +96,7 @@ public class Modifier extends Scene {
 		prenom = champTextePrenom.getText();
 		prenom = prenom.trim();
 		this.listeObservableStagiaires = listeObservableStagiaires;
+		this.modeAdmin=modeAdmin;
 
 		/*----------------- PARAMETRAGE DES ATTRIBUTS ----------------- */
 
@@ -312,7 +315,10 @@ public class Modifier extends Scene {
 
 				listeObservableStagiaires.clear();
 				listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
-
+				modeAdmin.setText("Modification réussie");
+				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+				modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
+				
 				/* fermeture de la fenêtre */
 				@SuppressWarnings("unused")
 				Window window = boutonValider.getScene().getWindow();

@@ -19,7 +19,6 @@ import fr.isika.cda21.projet1.annuaire.modeles.Annuaire;
 import fr.isika.cda21.projet1.annuaire.modeles.Stagiaire;
 import fr.isika.cda21.projet1.annuaire.utilitaires.Couleur;
 import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -158,6 +157,7 @@ public class VuePrincipale extends Scene {
 		ligneAdmin.getChildren().addAll(admin, codeAdmin);
 		ligneAdmin.setSpacing(5);
 		conteneurLogin.getChildren().addAll(ligneVisiteur, ligneAdmin, modeAdmin);
+		conteneurLogin.getChildren().add(rafraichir);
 		conteneurLogin.setSpacing(5);
 		conteneurLogin.setPadding(new Insets(20, 20, 20, 20));
 		conteneurLogin.setAlignment(Pos.CENTER_LEFT);
@@ -266,7 +266,7 @@ public class VuePrincipale extends Scene {
 		ajouter.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				/* créatioon d'une nouvelle scène avec le formulaire */
-				nouveauFormulaire = new FormulaireAjouter(annuaire, listeStagiaires, listeObservableStagiaires);
+				nouveauFormulaire = new FormulaireAjouter(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
 				/* ouverture d'une nouvelle fenêtre */
 				nouveauFormulaire.getNouvelleFenetre().setScene(nouveauFormulaire);
 				/* affichage de la fenêtre */
@@ -278,7 +278,7 @@ public class VuePrincipale extends Scene {
 		rechercher.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				/* création d'une nouvelle scène avec le formulaire */
-				nouvelleRecherche = new FormulaireRechercher(annuaire, listeStagiaires, listeObservableStagiaires);
+				nouvelleRecherche = new FormulaireRechercher(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
 				/* ouverture d'une nouvelle fenêtre */
 				nouvelleRecherche.getFenetreRechercher().setScene(nouvelleRecherche);
 				/* affichage de la fenêtre */
@@ -292,7 +292,7 @@ public class VuePrincipale extends Scene {
 				if (!(listeStagiaires.getSelectionModel().isEmpty())) {
 					modeAdmin.setText("");
 					/* création d'une nouvelle scène avec le formulaire */
-					Scene modifier = new Modifier(annuaire, listeStagiaires, listeObservableStagiaires);
+					Scene modifier = new Modifier(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
 					/* création d'une nouvelle fenêtre */
 					((Modifier) modifier).getFenetreModifier().setScene(modifier);
 					((Modifier) modifier).getFenetreModifier().show();
@@ -309,7 +309,7 @@ public class VuePrincipale extends Scene {
 				if (!(listeStagiaires.getSelectionModel().isEmpty())) {
 					modeAdmin.setText("");
 					/* créatioon d'une nouvelle scène avec le formulaire */
-					Scene supprimer = new Supprimer(annuaire, listeStagiaires, listeObservableStagiaires);
+					Scene supprimer = new Supprimer(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
 					/* création d'une nouvelle fenêtre */
 					Stage stage = new Stage();
 					stage.setTitle("Supprimer un stagiaire");
@@ -320,7 +320,7 @@ public class VuePrincipale extends Scene {
 				}
 				modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
 				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-				modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
+				modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 			}
 		});
 
@@ -338,16 +338,16 @@ public class VuePrincipale extends Scene {
 			}
 
 		});
-		conteneurLogin.getChildren().add(rafraichir);
-		rafraichir.setAlignment(Pos.BOTTOM_LEFT);
-
+		
+		//pour rafraichir la page
 		rafraichir.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
-				Platform.runLater(() -> {
-					listeStagiaires.setItems(listeObservableStagiaires);
-				});
+				barreDeRecherche.clear();
+				codeAdmin.clear();
+				modeAdmin.setText(null);
+				listeObservableStagiaires.clear();
+				listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
 			}
-
 		});
 
 		/* fermer l'application */
