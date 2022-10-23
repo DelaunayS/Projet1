@@ -227,24 +227,35 @@ public class VuePrincipale extends Scene {
 		admin.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 
-				/* si le mot de passe est correct */
-
-				if (codeAdmin.getText().equals(motDePasse)) {
-					codeAdmin.setText(null);
-
-					/* les boutons modifier et supprimer s'affichent */
-
+				/*
+				 * si le champ de saisie du mot de passe est vide on demande à l'utilisateur de
+				 * saisir son mot de passe
+				 */
+				if (codeAdmin.getText().equals("")) {
+					modeAdmin.setText("Veuillez saisir le mot de passe");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.web(Couleur.DANGER));
+				} else if
+				/*
+				 * si le mot de passe saisi est différent du mot de passe enregistré un message
+				 * d'erreur s'affiche
+				 */
+				(!(codeAdmin.getText().equals(motDePasse))) {
+					modeAdmin.setText("Mot de passe erroné. Veuillez réessayer.");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.web(Couleur.DANGER));
+				} else {
+					/*
+					 * sinon (si le mot de passe est correct) les boutons modifier et supprimer
+					 * apparaissent avec un message indiquant qu'on utilise le logiciel en mode
+					 * administrateur
+					 */
+					codeAdmin.setText("");
 					modifier.setVisible(true);
 					supprimer.setVisible(true);
 					modeAdmin.setText("Vous êtes en mode administrateur");
 					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
 					modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
-
-				} else { /* sinon message d'erreur et les boutons restent cachés */
-
-					modeAdmin.setText("Mot de passe erroné. Veuillez réessayer.");
-					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-					modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 				}
 			}
 		});
@@ -266,7 +277,8 @@ public class VuePrincipale extends Scene {
 		ajouter.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				/* créatioon d'une nouvelle scène avec le formulaire */
-				nouveauFormulaire = new FormulaireAjouter(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
+				nouveauFormulaire = new FormulaireAjouter(annuaire, listeStagiaires, listeObservableStagiaires,
+						getModeAdmin());
 				/* ouverture d'une nouvelle fenêtre */
 				nouveauFormulaire.getNouvelleFenetre().setScene(nouveauFormulaire);
 				/* affichage de la fenêtre */
@@ -278,7 +290,8 @@ public class VuePrincipale extends Scene {
 		rechercher.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				/* création d'une nouvelle scène avec le formulaire */
-				nouvelleRecherche = new FormulaireRechercher(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
+				nouvelleRecherche = new FormulaireRechercher(annuaire, listeStagiaires, listeObservableStagiaires,
+						getModeAdmin());
 				/* ouverture d'une nouvelle fenêtre */
 				nouvelleRecherche.getFenetreRechercher().setScene(nouvelleRecherche);
 				/* affichage de la fenêtre */
@@ -292,14 +305,15 @@ public class VuePrincipale extends Scene {
 				if (!(listeStagiaires.getSelectionModel().isEmpty())) {
 					modeAdmin.setText("");
 					/* création d'une nouvelle scène avec le formulaire */
-					Scene modifier = new Modifier(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
+					Scene modifier = new Modifier(annuaire, listeStagiaires, listeObservableStagiaires, getModeAdmin());
 					/* création d'une nouvelle fenêtre */
 					((Modifier) modifier).getFenetreModifier().setScene(modifier);
 					((Modifier) modifier).getFenetreModifier().show();
+				} else {
+					modeAdmin.setText("Veuillez sélectionner la ligne à modifier.");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 				}
-				modeAdmin.setText("Veuillez sélectionner la ligne à modifier.");
-				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-				modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 			}
 		});
 
@@ -309,7 +323,8 @@ public class VuePrincipale extends Scene {
 				if (!(listeStagiaires.getSelectionModel().isEmpty())) {
 					modeAdmin.setText("");
 					/* créatioon d'une nouvelle scène avec le formulaire */
-					Scene supprimer = new Supprimer(annuaire, listeStagiaires, listeObservableStagiaires,getModeAdmin());
+					Scene supprimer = new Supprimer(annuaire, listeStagiaires, listeObservableStagiaires,
+							getModeAdmin());
 					/* création d'une nouvelle fenêtre */
 					Stage stage = new Stage();
 					stage.setTitle("Supprimer un stagiaire");
@@ -317,10 +332,11 @@ public class VuePrincipale extends Scene {
 					stage.setScene(supprimer);
 					/* affichage de la fenêtre */
 					stage.show();
+				} else {
+					modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
+					modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
+					modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 				}
-				modeAdmin.setText("Veuillez sélectionner la ligne à supprimer.");
-				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
-				modeAdmin.setTextFill(Color.web(Couleur.DANGER));
 			}
 		});
 
@@ -338,8 +354,8 @@ public class VuePrincipale extends Scene {
 			}
 
 		});
-		
-		//pour rafraichir la page
+
+		// pour rafraichir la page
 		rafraichir.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				barreDeRecherche.clear();
@@ -367,7 +383,6 @@ public class VuePrincipale extends Scene {
 				listeAimprimer.addAll(listeStagiaires.getItems());
 				PdfPTable table = new PdfPTable(5);
 				table.setWidthPercentage(100);
-				
 
 				@SuppressWarnings("unused")
 				PdfPCell cell = null;
@@ -382,10 +397,10 @@ public class VuePrincipale extends Scene {
 					PdfWriter.getInstance(fichier, new FileOutputStream(
 							"./src/fr/isika/cda21/projet1/annuaire/utilitaires/Liste_Stagiaires.pdf"));
 					fichier.open();
-					
+
 					Paragraph titre = new Paragraph("LISTE DES STAGIAIRES");
 					titre.setAlignment(Element.ALIGN_CENTER);
-					fichier.add(titre);					
+					fichier.add(titre);
 					fichier.add(new Paragraph(" "));
 
 					for (int j = 0; j < listeAimprimer.size(); j++) {
@@ -407,11 +422,11 @@ public class VuePrincipale extends Scene {
 					popupStage.show();
 
 					PauseTransition wait = new PauseTransition(Duration.seconds(2));
-					wait.setOnFinished((e) -> {						
+					wait.setOnFinished((e) -> {
 						popupStage.close();
 					});
 					wait.play();
-					
+
 //					try {
 //						Process lancement = Runtime
 //								   .getRuntime()
@@ -433,7 +448,7 @@ public class VuePrincipale extends Scene {
 				PdfPCell cell = new PdfPCell(new Phrase(text));
 				cell.setPadding(5);
 				cell.setHorizontalAlignment(alignment);
-				cell.setBorder(PdfPCell.NO_BORDER);				
+				cell.setBorder(PdfPCell.NO_BORDER);
 				return cell;
 			}
 		});
