@@ -68,12 +68,12 @@ public class Modifier extends Scene {
 	/*----------------- CONSTRUCTEUR SURCHARGE ----------------- */
 
 	public Modifier(Annuaire annuaire, TableView<Stagiaire> listeStagiaires,
-			ObservableList<Stagiaire> listeObservableStagiaires,Label modeAdmin) {
+			ObservableList<Stagiaire> listeObservableStagiaires, Label modeAdmin) {
 		super(new GridPane(), 580, 300);
 		fenetreModifier = new Stage();
 		fenetreModifier.setTitle("Modifier un stagiaire");
 		panneauRacine = ((GridPane) this.getRoot());
-		panneauRacine.setStyle("-fx-background-color :"+Couleur.FLORAL);
+		panneauRacine.setStyle("-fx-background-color :" + Couleur.FLORAL);
 		etiquetteNom = new Label("NOM");
 		champTexteNom = new TextField();
 		champTexteNom.setMinWidth(250);
@@ -96,7 +96,7 @@ public class Modifier extends Scene {
 		prenom = champTextePrenom.getText();
 		prenom = prenom.trim();
 		this.listeObservableStagiaires = listeObservableStagiaires;
-		this.modeAdmin=modeAdmin;
+		this.modeAdmin = modeAdmin;
 
 		/*----------------- PARAMETRAGE DES ATTRIBUTS ----------------- */
 
@@ -263,8 +263,13 @@ public class Modifier extends Scene {
 
 				Stagiaire stagiaireModifie = new Stagiaire();
 
-				stagiaireModifie.setNom(champTexteNom.getText());
-				stagiaireModifie.setPrenom(champTextePrenom.getText());
+				stagiaireModifie.setNom(champTexteNom.getText().toUpperCase());
+				if (champTextePrenom.getText().length() >= 2) {
+					@SuppressWarnings("unused")
+					String prenom = champTextePrenom.getText().substring(0, 1).toUpperCase()
+							+ champTextePrenom.getText().substring(1).toLowerCase();
+				}
+				stagiaireModifie.setPrenom(prenom);
 				stagiaireModifie.setAnnee(Integer.parseInt(choixAnnee.getSelectionModel().getSelectedItem()));
 
 				if (choixDepartement.getSelectionModel().getSelectedItem() == null) {
@@ -318,7 +323,7 @@ public class Modifier extends Scene {
 				modeAdmin.setText("Modification réussie");
 				modeAdmin.setFont(Font.font("Verdana", FontWeight.BOLD, 13));
 				modeAdmin.setTextFill(Color.web(Couleur.SUCCESS));
-				
+
 				/* fermeture de la fenêtre */
 				@SuppressWarnings("unused")
 				Window window = boutonValider.getScene().getWindow();

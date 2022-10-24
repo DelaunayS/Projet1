@@ -355,7 +355,7 @@ public class VuePrincipale extends Scene {
 
 		});
 
-		// pour rafraichir la page
+		//rafraichir la page
 		rafraichir.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent arg0) {
 				barreDeRecherche.clear();
@@ -363,8 +363,10 @@ public class VuePrincipale extends Scene {
 				modeAdmin.setText(null);
 				listeObservableStagiaires.clear();
 				listeObservableStagiaires.setAll(annuaire.getListeDeStagiaires());
+				nombreTotalStagiaires.setText(null);
+				nombreTotalStagiaires.setText("Nombre total de stagiaires : " + listeStagiaires.getItems().size());
 			}
-		});
+		}); 
 
 		/* fermer l'application */
 		quitter.setOnAction(new EventHandler<ActionEvent>() {
