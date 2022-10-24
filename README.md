@@ -1,4 +1,4 @@
-# Projet1 
+# Projet1 : nécessite javafx 18 et itextpdf-5.5.13.3
 
 Un centre de formation souhaite ajouter à son système d'information un outil logiciel permettant de gérer de façon performante et conviviale la liste de ses stagiaires. 
 
